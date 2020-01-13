@@ -67,4 +67,13 @@ describe("User model", () => {
       );
     });
   });
+  describe("phone number validation", () => {
+    const testUser = getDefaultUser();
+    it("should not allow invalid phone numbers", () => {
+      testUser.phoneNumber = "45rt5";
+      expect(testUser.validateSync()).toBeInstanceOf(
+        mongoose.Error.ValidationError
+      );
+    });
+  });
 });
