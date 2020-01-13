@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const getDefaultUser = () =>
   new User({
     username: "longenough",
-    password: "test",
+    password: "longenoughpassword",
     mail: "test.the.mail@shouldpass.com",
   });
 
