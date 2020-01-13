@@ -4,9 +4,9 @@ const mongoose = require("mongoose");
 const getDefaultUser = () =>
   new User({
     username: "longenough",
-      password: "test",
+    password: "test",
     mail: "test.the.mail@shouldpass.com",
-    });
+  });
 
 describe("User model", () => {
   describe("username validation", () => {
@@ -26,6 +26,21 @@ describe("User model", () => {
     it("should not allow a length > 50", () => {
       testUser.username =
         "looooooooooooooooooooooooooooooooooooooooooooog username";
+      expect(testUser.validateSync()).toBeInstanceOf(
+        mongoose.Error.ValidationError
+      );
+    });
+  });
+  describe("mail validation", () => {
+    const testUser = getDefaultUser();
+    it("should not allow undefined value", () => {
+      testUser.mail = undefined;
+      expect(testUser.validateSync()).toBeInstanceOf(
+        mongoose.Error.ValidationError
+      );
+    });
+    it("should not allow invalid email", () => {
+      testUser.mail = "invalidmail";
       expect(testUser.validateSync()).toBeInstanceOf(
         mongoose.Error.ValidationError
       );
