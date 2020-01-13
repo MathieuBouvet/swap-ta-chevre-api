@@ -1,30 +1,18 @@
 const User = require("../../models/user.js");
 const mongoose = require("mongoose");
 
-describe("User model", () => {
-  describe("User fields", () => {
-    const testUser = new User({
-      username: "test_username",
-      password: "test_password",
-      mail: "test_mail",
-    });
-    it("should have a username", () => {
-      expect(testUser.username).toBeDefined();
-    });
-    it("should have a password", () => {
-      expect(testUser.password).toBeDefined();
-    });
-    it("should have a mail adress", () => {
-      expect(testUser.mail).toBeDefined();
-    });
-  });
-  describe("username validation", () => {
-    const testUser = new User({
-      username: undefined,
+const getDefaultUser = () =>
+  new User({
+    username: "longenough",
       password: "test",
-      mail: "test",
+    mail: "test.the.mail@shouldpass.com",
     });
-    it("should not allow undefined", () => {
+
+describe("User model", () => {
+  describe("username validation", () => {
+    const testUser = getDefaultUser();
+    it("should not allow undefined value", () => {
+      testUser.username = undefined;
       expect(testUser.validateSync()).toBeInstanceOf(
         mongoose.Error.ValidationError
       );
