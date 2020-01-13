@@ -9,6 +9,12 @@ const getDefaultUser = () =>
   });
 
 describe("User model", () => {
+  describe("user validation", () => {
+    const testUser = getDefaultUser();
+    it("should allow a valid user", () => {
+      expect(testUser.validateSync()).toBeUndefined();
+    });
+  });
   describe("username validation", () => {
     const testUser = getDefaultUser();
     it("should not allow undefined value", () => {
