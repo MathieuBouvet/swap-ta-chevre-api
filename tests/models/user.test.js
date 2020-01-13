@@ -46,4 +46,25 @@ describe("User model", () => {
       );
     });
   });
+  describe("password validation", () => {
+    const testUser = getDefaultUser();
+    it("should not allow undefined value", () => {
+      testUser.password = undefined;
+      expect(testUser.validateSync()).toBeInstanceOf(
+        mongoose.Error.ValidationError
+      );
+    });
+    it("should not allow empty value", () => {
+      testUser.password = "";
+      expect(testUser.validateSync()).toBeInstanceOf(
+        mongoose.Error.ValidationError
+      );
+    });
+    it("should not allow a password length < 8", () => {
+      testUser.password = "short";
+      expect(testUser.validateSync()).toBeInstanceOf(
+        mongoose.Error.ValidationError
+      );
+    });
+  });
 });
