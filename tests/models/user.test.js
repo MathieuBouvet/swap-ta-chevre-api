@@ -24,14 +24,13 @@ describe("User model", () => {
       );
     });
     it("should not allow a length < 8", () => {
-      testUser.username = "short";
+      testUser.username = "__7char";
       expect(testUser.validateSync("username")).toBeInstanceOf(
         mongoose.Error.ValidationError
       );
     });
     it("should not allow a length > 50", () => {
-      testUser.username =
-        "looooooooooooooooooooooooooooooooooooooooooooog username";
+      testUser.username = "_____________________________________________51char";
       expect(testUser.validateSync("username")).toBeInstanceOf(
         mongoose.Error.ValidationError
       );
@@ -67,7 +66,7 @@ describe("User model", () => {
       );
     });
     it("should not allow a password length < 8", () => {
-      testUser.password = "short";
+      testUser.password = "__7char";
       expect(testUser.validateSync("password")).toBeInstanceOf(
         mongoose.Error.ValidationError
       );
