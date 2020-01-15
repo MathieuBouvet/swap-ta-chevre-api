@@ -9,14 +9,11 @@ const getDefaultUser = () =>
   });
 
 describe("User model", () => {
-  describe("user validation", () => {
-    const testUser = getDefaultUser();
-    it("should allow a valid user", () => {
-      expect(testUser.validateSync()).toBeUndefined();
-    });
-  });
   describe("username validation", () => {
     const testUser = getDefaultUser();
+    it("should allow a valid username", () => {
+      expect(testUser.validateSync("username")).toBeUndefined();
+    });
     it("should not allow undefined value", () => {
       testUser.username = undefined;
       expect(testUser.validateSync("username")).toBeInstanceOf(
@@ -38,6 +35,9 @@ describe("User model", () => {
   });
   describe("mail validation", () => {
     const testUser = getDefaultUser();
+    it("should allow a valid mail", () => {
+      expect(testUser.validateSync("mail")).toBeUndefined();
+    });
     it("should not allow undefined value", () => {
       testUser.mail = undefined;
       expect(testUser.validateSync("mail")).toBeInstanceOf(
@@ -53,6 +53,9 @@ describe("User model", () => {
   });
   describe("password validation", () => {
     const testUser = getDefaultUser();
+    it("should allow a valid password", () => {
+      expect(testUser.validateSync("password")).toBeUndefined();
+    });
     it("should not allow undefined value", () => {
       testUser.password = undefined;
       expect(testUser.validateSync("password")).toBeInstanceOf(
@@ -74,6 +77,9 @@ describe("User model", () => {
   });
   describe("phone number validation", () => {
     const testUser = getDefaultUser();
+    it("should allow a valid phone number", () => {
+      expect(testUser.validateSync("phoneNumber")).toBeUndefined();
+    });
     it("should not allow invalid phone numbers", () => {
       testUser.phoneNumber = "45rt5";
       expect(testUser.validateSync("phoneNumber")).toBeInstanceOf(
