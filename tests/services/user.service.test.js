@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 const createUser = require("../../services/user.service").createUser;
 const User = require("../../models/user");
 
@@ -32,5 +33,21 @@ describe("User creation service", () => {
     const userInDataBase = await User.findById(userDocument._id);
     expect(userInDataBase.username).toBe(userData.username);
     expect(userInDataBase.mail).toBe(userData.mail);
+  });
+
+  it("should hash the password", async () => {
+    const userDocument = await createUser(userData);
+    const userInDataBase = await User.findById(userDocument._id);
+    expect(userInDataBase.password).not.toBe(userData.password);
+    const match = await bcrypt.compare(
+      userData.password,
+      userInDataBase.password
+    );
+    expect(match).toBe(true);
+  });
+
+  it("should return a user", async () => {
+    const userDocument = await createUser(userData);
+    expect(userDocument).toBeInstanceOf(User);
   });
 });
