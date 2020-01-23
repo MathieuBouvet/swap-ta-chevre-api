@@ -20,13 +20,14 @@ afterAll(async () => {
   await mongoose.connection.close();
 });
 
+const userData = {
+  username: "thetestuser",
+  password: "theuserpassword",
+  mail: "theusermail@test-mail.com",
+};
+
 describe("User creation service", () => {
   it("should save user in database", async () => {
-    const userData = {
-      username: "thetestuser",
-      password: "theuserpassword",
-      mail: "theusermail@test-mail.com",
-    };
     const userDocument = await createUser(userData);
     const userInDataBase = await User.findById(userDocument._id);
     expect(userInDataBase.username).toBe(userData.username);
