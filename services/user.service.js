@@ -1,3 +1,4 @@
+const User = require("../models/user");
 const InvalidArgumentError = require("../utils/errors/InvalidArgumentError");
 exports.createUser = async function(userData) {
   if (
@@ -6,7 +7,8 @@ exports.createUser = async function(userData) {
     Array.isArray(userData)
   ) {
     throw new InvalidArgumentError(
-      "userdata parameter should be an object describing a user."
+      "userata parameter should be an object describing a user."
     );
   }
+  return await new User(userData).save();
 };
