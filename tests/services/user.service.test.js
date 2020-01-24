@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const createUser = require("../../services/user.service").createUser;
 const User = require("../../models/user");
+const InvalidArgumentError = require("../../utils/errors/InvalidArgumentError");
 
 beforeAll(async () => {
   await mongoose.connect(
@@ -49,5 +50,11 @@ describe("User creation service", () => {
   it("should return a user", async () => {
     const userDocument = await createUser(userData);
     expect(userDocument).toBeInstanceOf(User);
+  });
+
+  it("should throw an error when user is null or undefined", async () => {
+    await expect(createUser()).rejects.toThrow(InvalidArgumentError);
+    await expect(createUser(undefined)).rejects.toThrow(InvalidArgumentError);
+    await expect(createUser(null)).rejects.toThrow(InvalidArgumentError);
   });
 });
