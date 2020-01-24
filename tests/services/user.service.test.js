@@ -29,6 +29,17 @@ const userData = {
 };
 
 describe("User creation service", () => {
+  it("should return a user", async () => {
+    const userDocument = await createUser(userData);
+    expect(userDocument).toBeInstanceOf(User);
+  });
+
+  it("should throw an error when user is null or undefined", async () => {
+    await expect(createUser()).rejects.toThrow(InvalidArgumentError);
+    await expect(createUser(undefined)).rejects.toThrow(InvalidArgumentError);
+    await expect(createUser(null)).rejects.toThrow(InvalidArgumentError);
+  });
+
   it("should save user in database", async () => {
     const userDocument = await createUser(userData);
     const userInDataBase = await User.findById(userDocument._id);
@@ -45,17 +56,6 @@ describe("User creation service", () => {
       userInDataBase.password
     );
     expect(match).toBe(true);
-  });
-
-  it("should return a user", async () => {
-    const userDocument = await createUser(userData);
-    expect(userDocument).toBeInstanceOf(User);
-  });
-
-  it("should throw an error when user is null or undefined", async () => {
-    await expect(createUser()).rejects.toThrow(InvalidArgumentError);
-    await expect(createUser(undefined)).rejects.toThrow(InvalidArgumentError);
-    await expect(createUser(null)).rejects.toThrow(InvalidArgumentError);
   });
 
   it("should not allow duplicate username", async () => {
