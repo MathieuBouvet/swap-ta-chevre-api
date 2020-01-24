@@ -22,6 +22,10 @@ afterAll(async () => {
   await mongoose.connection.close();
 });
 
+beforeEach(async () => {
+  await User.deleteMany({});
+});
+
 const userData = {
   username: "thetestuser",
   password: "theuserpassword",
