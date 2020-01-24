@@ -1,9 +1,11 @@
 const mongoose = require("mongoose");
+const uniqueValidator = require("mongoose-unique-validator");
 
 const userSchema = mongoose.Schema({
   username: {
     type: String,
     required: true,
+    unique: true,
     minlength: 8,
     maxlength: 50,
   },
@@ -22,5 +24,7 @@ const userSchema = mongoose.Schema({
     match: /^((\+)33|0)[1-9](\d{2}){4}$/,
   },
 });
+
+userSchema.plugin(uniqueValidator);
 
 module.exports = mongoose.model("User", userSchema);
