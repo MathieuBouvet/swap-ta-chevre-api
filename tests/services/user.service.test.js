@@ -34,10 +34,13 @@ describe("User creation service", () => {
     expect(userDocument).toBeInstanceOf(User);
   });
 
-  it("should throw an error when user is null or undefined", async () => {
+  it("should throw an error when userData is not an object", async () => {
     await expect(createUser()).rejects.toThrow(InvalidArgumentError);
     await expect(createUser(undefined)).rejects.toThrow(InvalidArgumentError);
     await expect(createUser(null)).rejects.toThrow(InvalidArgumentError);
+    await expect(createUser("string")).rejects.toThrow(InvalidArgumentError);
+    await expect(createUser(42)).rejects.toThrow(InvalidArgumentError);
+    await expect(createUser([])).rejects.toThrow(InvalidArgumentError);
   });
 
   it("should save user in database", async () => {
