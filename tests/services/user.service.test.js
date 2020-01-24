@@ -57,4 +57,11 @@ describe("User creation service", () => {
     await expect(createUser(undefined)).rejects.toThrow(InvalidArgumentError);
     await expect(createUser(null)).rejects.toThrow(InvalidArgumentError);
   });
+
+  it("should not allow duplicate username", async () => {
+    await createUser(userData);
+    await expect(createUser(userData)).rejects.toThrow(
+      mongoose.Error.ValidationError
+    );
+  });
 });
