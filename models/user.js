@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
+const bcrypt = require("bcrypt");
+const saltWorkFactor = Number.parseInt(process.env.SALT_ROUNDS);
 
 const userSchema = mongoose.Schema({
   username: {
@@ -23,6 +25,12 @@ const userSchema = mongoose.Schema({
     type: String,
     match: /^((\+)33|0)[1-9](\d{2}){4}$/,
   },
+});
+
+userSchema.pre("save", async function() {
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, saltWorkFactor);
+  }
 });
 
 userSchema.plugin(uniqueValidator);
