@@ -1,5 +1,6 @@
 const User = require("../../models/user.js");
 const mongoose = require("mongoose");
+const dbUtils = require("../dbUtils");
 
 const getDefaultUser = () =>
   new User({
@@ -85,6 +86,26 @@ describe("User model", () => {
       expect(testUser.validateSync("phoneNumber")).toBeInstanceOf(
         mongoose.Error.ValidationError
       );
+    });
+  });
+
+  describe("password comparison", () => {
+    beforeAll(dbUtils.setup);
+    afterAll(dbUtils.teardown);
+
+    it("should check given password", async () => {
+      const userData = {
+        username: "aTestUser",
+        password: "theuserpassword",
+        mail: "theusermail@test-mail.com",
+      };
+      const user = new User(userData);
+      await user.save();
+
+      const checkPassword = await user.isMyPassword("theuserpassword");
+      const checkPassword2 = await user.isMyPassword("notmypassword");
+      expect(checkPassword).toBe(true);
+      expect(checkPassword2).toBe(false);
     });
   });
 });
