@@ -65,6 +65,14 @@ describe("User creation service", () => {
     expect(match).toBe(true);
   });
 
+  it("should not hash password if not modified", async () => {
+    const userDocument = await createUser(userData);
+    const userInDb = await User.findById(userDocument._id);
+    const resavedUser = await userInDb.save();
+
+    expect(resavedUser.password).toBe(userDocument.password);
+  });
+
   it("should not allow duplicate username", async () => {
     await createUser(userData);
     await expect(createUser(userData)).rejects.toThrow(
