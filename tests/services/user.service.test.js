@@ -4,23 +4,11 @@ const createUser = require("../../services/user.service").createUser;
 const User = require("../../models/user");
 const InvalidArgumentError = require("../../utils/errors/InvalidArgumentError");
 
-beforeAll(async () => {
-  await mongoose.connect(
-    process.env.MONGO_URL,
-    { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true },
-    err => {
-      if (err) {
-        console.error(err);
-        process.exit(1);
-      }
-    }
-  );
-});
+const dbUtils = require("../dbUtils");
 
-afterAll(async () => {
-  await mongoose.connection.dropDatabase();
-  await mongoose.connection.close();
-});
+beforeAll(dbUtils.setup);
+
+afterAll(dbUtils.teardown);
 
 beforeEach(async () => {
   await User.deleteMany({});
