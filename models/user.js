@@ -33,6 +33,10 @@ userSchema.pre("save", async function() {
   }
 });
 
+userSchema.methods.isMyPassword = async function(passwordTocompare) {
+  return await bcrypt.compare(passwordTocompare, this.password);
+};
+
 userSchema.plugin(uniqueValidator);
 
 module.exports = mongoose.model("User", userSchema);
