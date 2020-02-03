@@ -4,7 +4,7 @@
   "description": "Web api for the swap ta chevre project",
   "main": "server.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --runInBand"
   },
   "author": "",
   "license": "ISC",
