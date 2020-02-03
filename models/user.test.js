@@ -95,7 +95,7 @@ describe("User model", () => {
 
     it("should check given password", async () => {
       const userData = {
-        username: "aTestUser",
+        username: "thetestuser",
         password: "theuserpassword",
         mail: "theusermail@test-mail.com",
       };
