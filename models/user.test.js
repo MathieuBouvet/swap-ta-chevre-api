@@ -1,6 +1,6 @@
-const User = require("../../models/user.js");
+const User = require("./user.js");
 const mongoose = require("mongoose");
-const dbUtils = require("../dbUtils");
+const dbUtils = require("../tests/dbUtils");
 
 const getDefaultUser = () =>
   new User({

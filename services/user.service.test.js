@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const createUser = require("../../services/user.service").createUser;
-const User = require("../../models/user");
-const InvalidArgumentError = require("../../utils/errors/InvalidArgumentError");
+const createUser = require("./user.service").createUser;
+const User = require("../models/user");
+const InvalidArgumentError = require("../utils/errors/InvalidArgumentError");
 
-const dbUtils = require("../dbUtils");
+const dbUtils = require("../tests/dbUtils");
 
 beforeAll(dbUtils.setup);
 
