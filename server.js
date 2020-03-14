@@ -1,7 +1,5 @@
-require("dotenv").config();
 const http = require("http");
 const app = require("./app");
-const mongooseSetup = require("./utils/setupMongoose");
 
 const normalizePort = val => {
   const port = parseInt(val, 10);
@@ -37,7 +35,7 @@ const errorHandler = error => {
       throw error;
   }
 };
-mongooseSetup();
+
 const server = http.createServer(app);
 
 server.on("error", errorHandler);

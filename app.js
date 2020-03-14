@@ -1,5 +1,8 @@
+require("dotenv").config();
 const express = require("express");
+const mongooseSetup = require("./utils/setupMongoose");
 
+mongooseSetup();
 const app = express();
 if (process.env.NODE_ENV === "production") {
   app.set("trust proxy", "loopback");
