@@ -1,3 +1,7 @@
+/**
+ * @jest-environment mongodb
+ */
+
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const createUser = require("./user.service").createUser;
