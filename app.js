@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const mongooseSetup = require("./utils/setupMongoose");
+const errorHandlers = require("./errorHandlers");
 
 mongooseSetup();
 const app = express();
@@ -14,4 +15,7 @@ app.use("/api/hello", (req, res) => {
   });
 });
 
+if (errorHandlers.length > 0) {
+  app.use(errorHandlers);
+}
 module.exports = app;
