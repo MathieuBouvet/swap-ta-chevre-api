@@ -13,7 +13,7 @@ describe("withErrorDispatcherToExpress wrapper", () => {
     );
   });
 
-  it("should dispatch errors thrown to express handler", () => {
+  it("should dispatch errors thrown in normal functions to express handler", () => {
     const nextMock = jest.fn(err => err);
     const req = {};
     const res = {};
@@ -21,6 +21,17 @@ describe("withErrorDispatcherToExpress wrapper", () => {
       throw new Error("a test error");
     });
     wrappedMethod(req, res, nextMock);
+    expect(nextMock.mock.calls[0][0].message).toBe("a test error");
+  });
+
+  it("should dispatch errors thrown in async functions to express handler", async () => {
+    const nextMock = jest.fn(err => err);
+    const req = {};
+    const res = {};
+    const wrappedMethod = withErrorDispatcherToExpress(async () => {
+      throw new Error("a test error");
+    });
+    await wrappedMethod(req, res, nextMock);
     expect(nextMock.mock.calls[0][0].message).toBe("a test error");
   });
 });
