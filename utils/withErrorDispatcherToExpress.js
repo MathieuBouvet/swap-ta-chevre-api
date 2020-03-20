@@ -8,7 +8,7 @@ module.exports = controllerMethod => {
   }
   return async (req, res, next) => {
     try {
-      await controllerMethod(req, res);
+      await controllerMethod(req, res, next);
     } catch (err) {
       next(err);
     }
