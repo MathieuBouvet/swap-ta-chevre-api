@@ -2,12 +2,15 @@ require("dotenv").config();
 const express = require("express");
 const mongooseSetup = require("./utils/setupMongoose");
 const errorHandlers = require("./errorHandlers");
+const userRouter = require("./routers/user.router");
 
 mongooseSetup();
 const app = express();
 if (process.env.NODE_ENV === "production") {
   app.set("trust proxy", "loopback");
 }
+
+app.use("/users", userRouter);
 
 app.use("/api/hello", (req, res) => {
   res.status(200).json({
