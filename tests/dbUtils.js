@@ -18,7 +18,16 @@ const teardown = async () => {
   await mongoose.connection.close();
 };
 
+const jestTeardown = async () => {
+  const collections = await mongoose.connection.db.collections();
+  for (let collection of collections) {
+    await collection.deleteMany();
+  }
+  await mongoose.connection.close();
+};
+
 module.exports = {
   setup,
   teardown,
+  jestTeardown,
 };
