@@ -4,10 +4,13 @@ const mongooseSetup = require("./utils/setupMongoose");
 const errorHandlers = require("./errorHandlers");
 const userRouter = require("./routers/user.router");
 
-mongooseSetup();
 const app = express();
+
 if (process.env.NODE_ENV === "production") {
   app.set("trust proxy", "loopback");
+}
+if (process.env.NODE_ENV !== "test") {
+  mongooseSetup();
 }
 
 app.use("/users", userRouter);
