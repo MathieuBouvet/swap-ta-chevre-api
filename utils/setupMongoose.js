@@ -1,11 +1,16 @@
 const mongoose = require("mongoose");
 module.exports = () => {
   mongoose
-    .connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useUnifiedTopology: true,
-    })
+    .connect(
+      process.env.NODE_ENV === "test"
+        ? process.env.MONGO_URI_FOR_TESTS
+        : process.env.MONGO_URI,
+      {
+        useNewUrlParser: true,
+        useCreateIndex: true,
+        useUnifiedTopology: true,
+      }
+    )
     .then(() => {
       console.log("Successfully connected to MongoDB Atlas!");
     })
