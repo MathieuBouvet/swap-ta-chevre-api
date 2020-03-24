@@ -13,13 +13,14 @@ afterAll(async () => {
 });
 
 describe("POST /users endpoint", () => {
-  it("should create a new user", async () => {
+  it("should respond correctly when input is OK", async () => {
     const res = await request.post("/users").send({
       username: "test-posting-user",
       password: "thepassword",
       mail: "test-posting-user@testmail.com",
       phoneNumber: "0945124578",
     });
+    expect(res.type).toBe("application/json");
     expect(res.statusCode).toBe(201);
   });
 });
