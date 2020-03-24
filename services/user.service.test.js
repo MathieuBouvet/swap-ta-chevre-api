@@ -5,7 +5,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const createUser = require("./user.service").createUser;
-const User = require("../models/user");
+const User = require("../models/user.model");
 const InvalidArgumentError = require("../utils/errors/InvalidArgumentError");
 
 const dbUtils = require("../tests/dbUtils");

@@ -2,7 +2,7 @@
  * @jest-environment mongodb
  */
 
-const User = require("./user.js");
+const User = require("./user.model.js");
 const mongoose = require("mongoose");
 const dbUtils = require("../tests/dbUtils");
 

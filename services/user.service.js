@@ -1,4 +1,4 @@
-const User = require("../models/user");
+const User = require("../models/user.model");
 const InvalidArgumentError = require("../utils/errors/InvalidArgumentError");
 exports.createUser = async function(userData) {
   if (
