@@ -1,4 +1,5 @@
-const registeredSpecificHandlers = [];
+const mongooseValidationErrorHandler = require("./mongooseValidationErrorHandler");
+const registeredSpecificHandlers = [mongooseValidationErrorHandler];
 
 const toErrorHandlerMiddleware = specificErrorHandler => {
   return (err, req, res, next) => {
