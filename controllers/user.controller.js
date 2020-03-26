@@ -1,6 +1,6 @@
-exports.addUser = (req, res) => {
-  res.status(501).json({
-    status: 501,
-    message: "Not Implemented",
-  });
+const userService = require("../services/user.service");
+
+exports.addUser = async (req, res) => {
+  await userService.createUser(req.body);
+  res.status(201).json();
 };
