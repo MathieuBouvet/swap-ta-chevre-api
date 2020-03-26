@@ -13,6 +13,8 @@ if (process.env.NODE_ENV !== "test") {
   mongooseSetup();
 }
 
+app.use(express.json());
+
 app.use("/users", userRouter);
 
 app.use("/api/hello", (req, res) => {
