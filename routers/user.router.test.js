@@ -3,6 +3,7 @@ const app = require("../app");
 const request = supertest(app);
 const setupMongoose = require("../utils/setupMongoose");
 const dbUtils = require("../tests/dbUtils");
+const User = require("../models/user.model");
 
 beforeAll(async () => {
   await setupMongoose("user-test-1");
@@ -14,14 +15,23 @@ afterAll(async () => {
 
 describe("POST /users endpoint", () => {
   it("should respond correctly when input is OK", async () => {
-    const res = await request.post("/users").send({
+    const userData = {
       username: "test-posting-user",
-      password: "thepassword",
       mail: "test-posting-user@testmail.com",
       phoneNumber: "0945124578",
-    });
+    };
+    const userDataWithPassword = {
+      ...userData,
+      password: "test-posting-user-password",
+    };
+    const res = await request.post("/users").send(userDataWithPassword);
+    const createdUser = await User.findOne({
+      username: "test-posting-user",
+    }).select("username mail phoneNumber -_id");
+
     expect(res.type).toBe("application/json");
     expect(res.statusCode).toBe(201);
+    expect(createdUser.toObject()).toEqual(userData);
   });
 
   it("should respond correctly to inputs failing validations", async () => {
