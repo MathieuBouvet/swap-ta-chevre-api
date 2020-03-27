@@ -73,12 +73,6 @@ describe("POST /users endpoint", () => {
   });
 
   it("should respond correctly to a duplicate username", async () => {
-    await request.post("/users").send({
-      username: "test-posting-user",
-      password: "thepassword",
-      mail: "test-posting-user@testmail.com",
-      phoneNumber: "0945124578",
-    });
     const res = await request.post("/users").send({
       username: "test-posting-user",
       password: "thepassword",
