@@ -1,36 +1,21 @@
+require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
+const mongooseSetup = require("./utils/setupMongoose");
+const errorHandlers = require("./errorHandlers");
+const userRouter = require("./routers/user.router");
 
 const app = express();
+
 if (process.env.NODE_ENV === "production") {
   app.set("trust proxy", "loopback");
 }
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log("Successfully connected to MongoDB Atlas!");
-  })
-  .catch(error => {
-    console.log("Unable to connect to MongoDB Atlas!");
-    console.error(error);
-  });
+if (process.env.NODE_ENV !== "test") {
+  mongooseSetup();
+}
 
-mongoose.connection.on("disconnected", function() {
-  console.log("Mongoose default connection is disconnected");
-});
+app.use(express.json());
 
-process.on("SIGINT", function() {
-  mongoose.connection.close(function() {
-    console.log(
-      "Mongoose default connection is disconnected due to application termination"
-    );
-    process.exit(0);
-  });
-});
+app.use("/users", userRouter);
 
 app.use("/api/hello", (req, res) => {
   res.status(200).json({
@@ -38,4 +23,7 @@ app.use("/api/hello", (req, res) => {
   });
 });
 
+if (errorHandlers.length > 0) {
+  app.use(errorHandlers);
+}
 module.exports = app;
