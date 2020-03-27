@@ -4,7 +4,8 @@
   "description": "Web api for the swap ta chevre project",
   "main": "server.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "preinstall": "npx npm-force-resolutions"
   },
   "author": "",
   "license": "ISC",
@@ -21,7 +22,11 @@
     "eslint-plugin-jest": "^23.8.2",
     "jest": "^24.9.0",
     "jest-environment-mongodb": "^1.0.2",
+    "minimist": "^1.2.5",
     "mongodb-memory-server": "^6.5.0",
     "supertest": "^4.0.2"
+  },
+  "resolutions": {
+    "minimist": "^1.2.5"
   }
 }
