@@ -80,6 +80,17 @@ describe("POST /users endpoint", () => {
       phoneNumber: "0945124578",
     });
     expect(res.status).toBe(400);
-    // todo cehck for correct error object in response body
+    expect(res.body).toMatchObject({
+      httpStatus: 400,
+      httpMessage: "Bad Request",
+      errorDetails: {
+        username: {
+          kind: "unique",
+          name: "ValidatorError",
+          message:
+            "Error, expected `username` to be unique. Value: `test-posting-user`",
+        },
+      },
+    });
   });
 });
