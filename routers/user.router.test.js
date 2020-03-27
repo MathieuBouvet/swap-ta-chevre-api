@@ -42,7 +42,34 @@ describe("POST /users endpoint", () => {
       phoneNumber: "bad",
     });
     expect(res.status).toBe(400);
-    // todo check for correct error object in response body
+    expect(res.body).toMatchObject({
+      httpStatus: 400,
+      httpMessage: "Bad Request",
+      errorDetails: {
+        mail: {
+          kind: "regexp",
+          name: "ValidatorError",
+          message: "Path `mail` is invalid (bad).",
+        },
+        password: {
+          kind: "minlength",
+          name: "ValidatorError",
+          message:
+            "Path `password` (`bad`) is shorter than the minimum allowed length (8).",
+        },
+        phoneNumber: {
+          kind: "regexp",
+          name: "ValidatorError",
+          message: "Path `phoneNumber` is invalid (bad).",
+        },
+        username: {
+          kind: "minlength",
+          name: "ValidatorError",
+          message:
+            "Path `username` (`bad`) is shorter than the minimum allowed length (8).",
+        },
+      },
+    });
   });
 
   it("should respond correctly to a duplicate username", async () => {
