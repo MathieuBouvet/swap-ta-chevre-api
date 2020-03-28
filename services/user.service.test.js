@@ -94,4 +94,12 @@ describe("User finder by id service", () => {
     const notFound = await findUserById(mongoose.Types.ObjectId());
     expect(notFound).toBeNull();
   });
+  it("should return null when given id is not castable as mongoose id", async () => {
+    const notCastable = await findUserById("hahaha");
+    expect(notCastable).toBeNull();
+  });
+  it("should throw exceptions normally", async () => {
+    const shouldThrow = findUserById(seededUser._id, "", { projection: true });
+    await expect(shouldThrow).rejects.toThrow();
+  });
 });
