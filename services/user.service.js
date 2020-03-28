@@ -1,5 +1,10 @@
 const User = require("../models/user.model");
 const InvalidArgumentError = require("../utils/errors/InvalidArgumentError");
+const MongooseCastError = require("mongoose").Error.CastError;
+
+const isNotCastableIdError = error =>
+  error instanceof MongooseCastError && error.kind == "ObjectId";
+
 exports.createUser = async function(userData) {
   if (
     typeof userData !== "object" ||
@@ -14,5 +19,12 @@ exports.createUser = async function(userData) {
 };
 
 exports.findUserById = async function(userId, projection, options) {
-  return await User.findById(userId, projection, options);
+  try {
+    return await User.findById(userId, projection, options);
+  } catch (err) {
+    if (isNotCastableIdError(err)) {
+      return null;
+    }
+    throw err;
+  }
 };
