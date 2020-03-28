@@ -14,10 +14,6 @@ beforeAll(dbUtils.setup);
 
 afterAll(dbUtils.teardown);
 
-beforeEach(async () => {
-  await User.deleteMany({});
-});
-
 const userData = {
   username: "thetestuser",
   password: "theuserpassword",
@@ -25,6 +21,9 @@ const userData = {
 };
 
 describe("User creation service", () => {
+  beforeEach(async () => {
+    await User.deleteMany({});
+  });
   it("should return a user", async () => {
     const userDocument = await createUser(userData);
     expect(userDocument).toBeInstanceOf(User);
