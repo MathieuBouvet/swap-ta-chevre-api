@@ -12,3 +12,7 @@ exports.createUser = async function(userData) {
   }
   return await new User(userData).save();
 };
+
+exports.findUserById = async function(userId, projection, options) {
+  return null;
+};
