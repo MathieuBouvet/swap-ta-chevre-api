@@ -5,6 +5,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const createUser = require("./user.service").createUser;
+const findUserById = require("./user.service").findUserById;
 const User = require("../models/user.model");
 const InvalidArgumentError = require("../utils/errors/InvalidArgumentError");
 
@@ -69,5 +70,24 @@ describe("User creation service", () => {
     await expect(createUser(userData)).rejects.toThrow(
       mongoose.Error.ValidationError
     );
+  });
+});
+
+describe("User finder by id service", () => {
+  let seededUser = null;
+  beforeAll(async () => {
+    seededUser = await new User({
+      username: "test-user-username",
+      password: "test-user-password",
+      mail: "test-user-mail@test-mail.com",
+    }).save();
+  });
+  it("should return user with given id", async () => {
+    const searchedUser = await findUserById(seededUser._id);
+    expect(searchedUser.toObject()).toMatchObject(seededUser.toObject());
+  });
+  it("should allow fields selection", async () => {
+    const searchedUser = await findUserById(seededUser._id, "username -_id");
+    expect(searchedUser.toObject()).toEqual({ username: "test-user-username" });
   });
 });
