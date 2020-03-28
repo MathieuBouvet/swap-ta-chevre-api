@@ -90,4 +90,8 @@ describe("User finder by id service", () => {
     const searchedUser = await findUserById(seededUser._id, "username -_id");
     expect(searchedUser.toObject()).toEqual({ username: "test-user-username" });
   });
+  it("should return null when id is not found", async () => {
+    const notFound = await findUserById(mongoose.Types.ObjectId());
+    expect(notFound).toBeNull();
+  });
 });
