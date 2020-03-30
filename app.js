@@ -3,6 +3,8 @@ const express = require("express");
 const mongooseSetup = require("./utils/setupMongoose");
 const errorHandlers = require("./errorHandlers");
 const userRouter = require("./routers/user.router");
+const passport = require("passport");
+const localStrategy = require("./utils/passport-strategies/local.strategy");
 
 const app = express();
 
@@ -14,6 +16,9 @@ if (process.env.NODE_ENV !== "test") {
 }
 
 app.use(express.json());
+
+app.use(passport.initialize());
+passport.use(localStrategy);
 
 app.use("/users", userRouter);
 
