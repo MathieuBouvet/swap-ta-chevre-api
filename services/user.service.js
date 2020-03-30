@@ -30,5 +30,5 @@ exports.findUserById = async function(userId, projection, options) {
 };
 
 exports.findUserByName = async function(username, projection, options) {
-  return {};
+  return await User.findOne({ username }, projection, options);
 };
