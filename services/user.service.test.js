@@ -82,6 +82,9 @@ describe("User finder by id service", () => {
       mail: "test-user-mail@test-mail.com",
     }).save();
   });
+  afterAll(async () => {
+    await User.deleteMany({});
+  });
   it("should return user with given id", async () => {
     const searchedUser = await findUserById(seededUser._id);
     expect(searchedUser.toObject()).toMatchObject(seededUser.toObject());
