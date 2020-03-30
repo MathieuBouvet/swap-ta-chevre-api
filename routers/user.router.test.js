@@ -97,3 +97,27 @@ describe("POST /users endpoint", () => {
     });
   });
 });
+
+describe("POST /login endpoint", () => {
+  beforeAll(async () => {
+    await new User({
+      username: "test-posting-user",
+      mail: "test-posting-user@testmail.com",
+      password: "test-password",
+    }).save();
+  });
+  it("should respond with a jwt auth token in a http only cookie", async () => {
+    const res = await request.post("/users/login").send({
+      username: "test-posting-user",
+      password: "test-password",
+    });
+    expect(res.status).toBe(200);
+  });
+  it("should not log in unknown user", async () => {
+    const res = await request.post("/users/login").send({
+      username: "unknown-username",
+      password: "test-password",
+    });
+    expect(res.status).toBe(401);
+  });
+});
