@@ -14,6 +14,9 @@ afterAll(async () => {
 });
 
 describe("POST /users endpoint", () => {
+  afterAll(async () => {
+    await User.deleteMany({});
+  });
   it("should respond correctly when input is OK", async () => {
     const userData = {
       username: "test-posting-user",
