@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const createUser = require("./user.service").createUser;
 const findUserById = require("./user.service").findUserById;
+const findUserByName = require("./user.service").findUserByName;
 const User = require("../models/user.model");
 const InvalidArgumentError = require("../utils/errors/InvalidArgumentError");
 
@@ -104,5 +105,31 @@ describe("User finder by id service", () => {
   it("should throw exceptions normally", async () => {
     const shouldThrow = findUserById(seededUser._id, "", { projection: true });
     await expect(shouldThrow).rejects.toThrow();
+  });
+});
+
+describe("User finder by name service", () => {
+  let seededUser = null;
+  beforeAll(async () => {
+    seededUser = await new User({
+      username: "test-user-username",
+      password: "test-user-password",
+      mail: "test-user-mail@test-mail.com",
+    }).save();
+  });
+  it("Should return user with given name", async () => {
+    const searchedUser = await findUserByName(seededUser.username);
+    expect(searchedUser.toObject()).toMatchObject(seededUser.toObject());
+  });
+  it("should allow fields selection", async () => {
+    const searchedUser = await findUserByName(
+      seededUser.username,
+      "username -_id"
+    );
+    expect(searchedUser.toObject()).toEqual({ username: "test-user-username" });
+  });
+  it("should return null when username does not exist", async () => {
+    const notFound = await findUserByName("username-does-not-exist");
+    expect(notFound).toBeNull();
   });
 });
