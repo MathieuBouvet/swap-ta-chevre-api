@@ -119,5 +119,9 @@ describe("POST /login endpoint", () => {
       password: "test-password",
     });
     expect(res.status).toBe(401);
+    expect(res.body).toMatchObject({
+      httpStatus: 401,
+      httpMessage: "Unauthorized",
+    });
   });
 });
