@@ -28,3 +28,7 @@ exports.findUserById = async function(userId, projection, options) {
     throw err;
   }
 };
+
+exports.findUserByName = async function(username, projection, options) {
+  return {};
+};
