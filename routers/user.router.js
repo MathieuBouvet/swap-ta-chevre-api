@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const controller = require("../controllers/user.controller");
-const basicAuthentication = require("../middelwares/basic-auth.middleware");
+const localAuthentication = require("../middelwares/localAuthentication");
 
 router.post("/", controller.addUser);
-router.post("/login", basicAuthentication, controller.login);
+router.post("/login", localAuthentication, controller.login);
 module.exports = router;
