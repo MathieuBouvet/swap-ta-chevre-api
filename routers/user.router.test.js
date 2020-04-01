@@ -1,9 +1,12 @@
+require("dotenv").config();
 const supertest = require("supertest");
 const app = require("../app");
 const request = supertest(app);
 const setupMongoose = require("../utils/setupMongoose");
 const dbUtils = require("../tests/dbUtils");
 const User = require("../models/user.model");
+const cookieParser = require("set-cookie-parser");
+const jwt = require("jsonwebtoken");
 
 beforeAll(async () => {
   await setupMongoose("user-test-1");
@@ -99,8 +102,9 @@ describe("POST /users endpoint", () => {
 });
 
 describe("POST /login endpoint", () => {
+  let seededUser = null;
   beforeAll(async () => {
-    await new User({
+    seededUser = await new User({
       username: "test-posting-user",
       mail: "test-posting-user@testmail.com",
       password: "test-password",
@@ -111,7 +115,11 @@ describe("POST /login endpoint", () => {
       username: "test-posting-user",
       password: "test-password",
     });
-    expect(res.status).toBe(200);
+    const cookies = cookieParser(res, { map: true });
+    const decoded = jwt.decode(cookies.accessToken.value);
+    expect(res.status).toBe(201);
+    expect(decoded.sub).toBe(seededUser._id.toString());
+    expect(jwt.verify(cookies.accessToken.value, process.env.JWT_SECRET_KEY));
   });
   it("should not log in unknown user", async () => {
     const res = await request.post("/users/login").send({
