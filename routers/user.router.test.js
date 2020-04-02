@@ -126,14 +126,36 @@ describe("POST /login endpoint", () => {
     expect(jwt.verify(cookies.accessToken.value, process.env.JWT_SECRET_KEY));
   });
   it("should not log in unknown user", async () => {
-    const res = await request.post("/users/login").send({
+    const invalidUsernameRequest = request.post("/users/login").send({
       username: "unknown-username",
       password: "test-password",
     });
-    expect(res.status).toBe(401);
-    expect(res.body).toMatchObject({
+    const invalidPasswordRequest = request.post("/users/login").send({
+      username: "test-posting-username",
+      password: "password-don't-match",
+    });
+    const [invalidUsernameRes, invalidPasswordRes] = await Promise.all([
+      invalidUsernameRequest,
+      invalidPasswordRequest,
+    ]);
+    const invalidUsernameCookie = cookieParser(invalidUsernameRes, {
+      map: true,
+    });
+    const invalidPasswordCookie = cookieParser(invalidPasswordRes, {
+      map: true,
+    });
+    expect(invalidUsernameRes.status).toBe(401);
+    expect(invalidUsernameRes.body).toMatchObject({
       httpStatus: 401,
       httpMessage: "Unauthorized",
     });
+    expect(invalidUsernameCookie).toEqual({});
+
+    expect(invalidPasswordRes.status).toBe(401);
+    expect(invalidPasswordRes.body).toMatchObject({
+      httpStatus: 401,
+      httpMessage: "Unauthorized",
+    });
+    expect(invalidPasswordCookie).toEqual({});
   });
 });
