@@ -118,6 +118,10 @@ describe("POST /login endpoint", () => {
     const cookies = cookieParser(res, { map: true });
     const decoded = jwt.decode(cookies.accessToken.value);
     expect(res.status).toBe(201);
+    expect(cookies.accessToken.httpOnly).toBeTruthy();
+    expect(!!cookies.accessToken.secure).toBe(
+      process.env.NODE_ENV === "production"
+    );
     expect(decoded.sub).toBe(seededUser._id.toString());
     expect(jwt.verify(cookies.accessToken.value, process.env.JWT_SECRET_KEY));
   });
