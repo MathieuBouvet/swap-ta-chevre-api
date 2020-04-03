@@ -6,7 +6,7 @@ const registeredSpecificHandlers = [
   http401Handler,
 ];
 
-const toErrorHandlerMiddleware = specificErrorHandler => {
+const toErrorHandlerMiddleware = (specificErrorHandler) => {
   return (err, req, res, next) => {
     if (err instanceof specificErrorHandler.handledErrorType) {
       specificErrorHandler.handler(err, req, res, next);
