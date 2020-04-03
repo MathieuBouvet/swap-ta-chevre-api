@@ -3,7 +3,7 @@ const InvalidArgumentError = require("../utils/errors/InvalidArgumentError");
 const MongooseCastError = require("mongoose").Error.CastError;
 
 const isNotCastableIdError = (error) =>
-  error instanceof MongooseCastError && error.kind == "ObjectId";
+  error instanceof MongooseCastError && error.path === "_id";
 
 exports.createUser = async function (userData) {
   if (
