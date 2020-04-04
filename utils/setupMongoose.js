@@ -1,17 +1,17 @@
 const mongoose = require("mongoose");
-const getMongoDbConnectionString = dbName => {
+const getMongoDbConnectionString = (dbName) => {
   if (dbName === "") {
     return process.env.MONGO_URI_DEFAULT;
   }
   return process.env.MONGO_URI_CUSTOM.replace("{customizable}", dbName + "-");
 };
 module.exports = async (dbName = "") => {
-  mongoose.connection.on("disconnected", function() {
+  mongoose.connection.on("disconnected", function () {
     console.log("Mongoose default connection is disconnected");
   });
 
-  process.on("SIGINT", function() {
-    mongoose.connection.close(function() {
+  process.on("SIGINT", function () {
+    mongoose.connection.close(function () {
       console.log(
         "Mongoose default connection is disconnected due to application termination"
       );

@@ -14,7 +14,7 @@ describe("withErrorDispatcherToExpress wrapper", () => {
   });
 
   it("should dispatch errors thrown in normal functions to express handler", () => {
-    const nextMock = jest.fn(err => err);
+    const nextMock = jest.fn((err) => err);
     const req = {};
     const res = {};
     const wrappedMethod = withErrorDispatcherToExpress(() => {
@@ -25,7 +25,7 @@ describe("withErrorDispatcherToExpress wrapper", () => {
   });
 
   it("should dispatch errors thrown in async functions to express handler", async () => {
-    const nextMock = jest.fn(err => err);
+    const nextMock = jest.fn((err) => err);
     const req = {};
     const res = {};
     const wrappedMethod = withErrorDispatcherToExpress(async () => {

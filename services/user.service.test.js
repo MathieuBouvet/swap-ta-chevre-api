@@ -5,6 +5,8 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const createUser = require("./user.service").createUser;
+const findUserById = require("./user.service").findUserById;
+const findUserByName = require("./user.service").findUserByName;
 const User = require("../models/user.model");
 const InvalidArgumentError = require("../utils/errors/InvalidArgumentError");
 
@@ -14,10 +16,6 @@ beforeAll(dbUtils.setup);
 
 afterAll(dbUtils.teardown);
 
-beforeEach(async () => {
-  await User.deleteMany({});
-});
-
 const userData = {
   username: "thetestuser",
   password: "theuserpassword",
@@ -25,6 +23,9 @@ const userData = {
 };
 
 describe("User creation service", () => {
+  beforeEach(async () => {
+    await User.deleteMany({});
+  });
   it("should return a user", async () => {
     const userDocument = await createUser(userData);
     expect(userDocument).toBeInstanceOf(User);
@@ -70,5 +71,65 @@ describe("User creation service", () => {
     await expect(createUser(userData)).rejects.toThrow(
       mongoose.Error.ValidationError
     );
+  });
+});
+
+describe("User finder by id service", () => {
+  let seededUser = null;
+  beforeAll(async () => {
+    seededUser = await new User({
+      username: "test-user-username",
+      password: "test-user-password",
+      mail: "test-user-mail@test-mail.com",
+    }).save();
+  });
+  afterAll(async () => {
+    await User.deleteMany({});
+  });
+  it("should return user with given id", async () => {
+    const searchedUser = await findUserById(seededUser._id);
+    expect(searchedUser.toObject()).toMatchObject(seededUser.toObject());
+  });
+  it("should allow fields selection", async () => {
+    const searchedUser = await findUserById(seededUser._id, "username -_id");
+    expect(searchedUser.toObject()).toEqual({ username: "test-user-username" });
+  });
+  it("should return null when id is not found", async () => {
+    const notFound = await findUserById(mongoose.Types.ObjectId());
+    expect(notFound).toBeNull();
+  });
+  it("should return null when given id is not castable as mongoose id", async () => {
+    const notCastable = await findUserById("hahaha");
+    expect(notCastable).toBeNull();
+  });
+  it("should throw exceptions normally", async () => {
+    const shouldThrow = findUserById(seededUser._id, "", { projection: true });
+    await expect(shouldThrow).rejects.toThrow();
+  });
+});
+
+describe("User finder by name service", () => {
+  let seededUser = null;
+  beforeAll(async () => {
+    seededUser = await new User({
+      username: "test-user-username",
+      password: "test-user-password",
+      mail: "test-user-mail@test-mail.com",
+    }).save();
+  });
+  it("Should return user with given name", async () => {
+    const searchedUser = await findUserByName(seededUser.username);
+    expect(searchedUser.toObject()).toMatchObject(seededUser.toObject());
+  });
+  it("should allow fields selection", async () => {
+    const searchedUser = await findUserByName(
+      seededUser.username,
+      "username -_id"
+    );
+    expect(searchedUser.toObject()).toEqual({ username: "test-user-username" });
+  });
+  it("should return null when username does not exist", async () => {
+    const notFound = await findUserByName("username-does-not-exist");
+    expect(notFound).toBeNull();
   });
 });

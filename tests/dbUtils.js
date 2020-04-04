@@ -4,7 +4,7 @@ const setup = async () => {
   await mongoose.connect(
     global.MONGO_URI,
     { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true },
-    err => {
+    (err) => {
       if (err) {
         console.error(err);
         process.exit(1);
