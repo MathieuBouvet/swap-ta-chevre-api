@@ -6,6 +6,7 @@ const userRouter = require("./routers/user.router");
 const passport = require("passport");
 const localStrategy = require("./utils/passport-strategies/local.strategy");
 const cookies = require("cookies");
+const sanitize = require("express-mongo-sanitize");
 
 const app = express();
 
@@ -18,6 +19,7 @@ if (process.env.NODE_ENV !== "test") {
 
 app.use(express.json());
 app.use(cookies.express());
+app.use(sanitize());
 
 app.use(passport.initialize());
 passport.use(localStrategy);
