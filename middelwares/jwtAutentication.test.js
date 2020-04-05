@@ -21,12 +21,13 @@ const mockNext = () => jest.fn();
 passport.use(jwtStrategy);
 
 describe("Jwt autentication middleware", () => {
-  it("should attach a valid access token to the req object", (done) => {
+  it("should attach a valid access token to the req object", () => {
     const req = mockRequest({ sub: "me" });
     const res = mockResponse();
     const next = mockNext();
     jwtAuth(req, res, next);
-    expect(next).toHaveBeenCalled();
-    done();
+    expect(next.mock.calls[0].length).toBe(0);
+    expect(req).toHaveProperty("userToken");
+    expect(req.userToken).toHaveProperty("sub");
   });
 });
