@@ -4,14 +4,27 @@ const jwtAuth = require("./jwtAutentication");
 const passport = require("passport");
 const jwtStrategy = require("../utils/passport-strategies/jwt.strategy");
 
-const mockRequest = (data, notExpired = true) => {
-  const expiration = Math.floor(Date.now() / 1000) + (notExpired ? 60 : -60);
+const mockRequest = (data, tokenGenMode = "VALID") => {
+  const expiration =
+    Math.floor(Date.now() / 1000) + (tokenGenMode === "EXPIRED" ? -60 : 60);
+  let accessToken = jwt.sign(
+    { ...data, exp: expiration },
+    tokenGenMode === "INVALID_KEY" ? "invalid_key" : process.env.JWT_SECRET_KEY
+  );
+  if (tokenGenMode === "TEMPERED_WITH") {
+    const temperedJwtParts = jwt
+      .sign({ sub: "hahaha not me" }, process.env.JWT_SECRET_KEY)
+      .split(".");
+    const accessTokenJwtParts = accessToken.split(".");
+    accessToken = [
+      accessTokenJwtParts[0],
+      temperedJwtParts[1],
+      accessTokenJwtParts[2],
+    ].join(".");
+  }
   return {
     cookies: {
-      accessToken: jwt.sign(
-        { ...data, exp: expiration },
-        process.env.JWT_SECRET_KEY
-      ),
+      accessToken,
     },
   };
 };
