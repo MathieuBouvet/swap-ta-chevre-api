@@ -23,6 +23,9 @@ const mockRequest = (data, tokenGenMode = "VALID") => {
       accessTokenJwtParts[2],
     ].join(".");
   }
+  if (tokenGenMode === "EMPTY") {
+    accessToken = null;
+  }
   return {
     cookies: {
       accessToken,
@@ -47,6 +50,7 @@ describe("Jwt autentication middleware", () => {
     ["has expired", mockRequest({ sub: "me" }, "EXPIRED")],
     ["is invalid", mockRequest({ sub: "me" }, "INVALID_KEY")],
     ["was tempered with", mockRequest({ sub: "me" }, "TEMPERED_WITH")],
+    ["is empty", mockRequest({ sub: "me" }, "EMPTY")],
   ])("should not authenticate user when token %s", (testName, req) => {
     const next = mockNext();
     jwtAuth(req, null, next);
