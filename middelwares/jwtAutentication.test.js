@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const jwtAuth = require("./jwtAutentication");
 const passport = require("passport");
 const jwtStrategy = require("../utils/passport-strategies/jwt.strategy");
+const Http401 = require("../utils/errors/Http401");
 
 const mockRequest = (data, tokenGenMode = "VALID") => {
   const expiration =
@@ -40,5 +41,16 @@ describe("Jwt autentication middleware", () => {
     expect(next.mock.calls[0].length).toBe(0);
     expect(req).toHaveProperty("userToken");
     expect(req.userToken).toHaveProperty("sub");
+  });
+
+  it.each([
+    ["has expired", mockRequest({ sub: "me" }, "EXPIRED")],
+    ["is invalid", mockRequest({ sub: "me" }, "INVALID_KEY")],
+    ["was tempered with", mockRequest({ sub: "me" }, "TEMPERED_WITH")],
+  ])("should not authenticate user when token %s", (testName, req) => {
+    const next = mockNext();
+    jwtAuth(req, null, next);
+    expect(next).toHaveBeenCalledWith(expect.any(Http401));
+    expect(req).not.toHaveProperty("userToken");
   });
 });
