@@ -15,7 +15,6 @@ const mockRequest = (data, notExpired = true) => {
     },
   };
 };
-const mockResponse = () => {};
 const mockNext = () => jest.fn();
 
 passport.use(jwtStrategy);
@@ -23,9 +22,8 @@ passport.use(jwtStrategy);
 describe("Jwt autentication middleware", () => {
   it("should attach a valid access token to the req object", () => {
     const req = mockRequest({ sub: "me" });
-    const res = mockResponse();
     const next = mockNext();
-    jwtAuth(req, res, next);
+    jwtAuth(req, null, next);
     expect(next.mock.calls[0].length).toBe(0);
     expect(req).toHaveProperty("userToken");
     expect(req.userToken).toHaveProperty("sub");
