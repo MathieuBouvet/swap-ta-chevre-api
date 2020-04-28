@@ -129,7 +129,7 @@ describe("POST /login endpoint", () => {
       password: "test-password",
     });
     const invalidPasswordRequest = request.post("/users/login").send({
-      username: "test-posting-username",
+      username: "test-posting-user",
       password: "password-don't-match",
     });
     const [invalidUsernameRes, invalidPasswordRes] = await Promise.all([
