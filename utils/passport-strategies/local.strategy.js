@@ -7,7 +7,7 @@ module.exports = new LocalStrategy(async (username, password, done) => {
     if (!user) {
       return done(null, false);
     }
-    if (await !user.isMyPassword(password)) {
+    if (!(await user.isMyPassword(password))) {
       return done(null, false);
     }
     return done(null, user);
