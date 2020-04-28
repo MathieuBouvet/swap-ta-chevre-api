@@ -4,13 +4,13 @@
 
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const createUser = require("./user.service").createUser;
-const findUserById = require("./user.service").findUserById;
-const findUserByName = require("./user.service").findUserByName;
-const User = require("../models/user.model");
-const InvalidArgumentError = require("../utils/errors/InvalidArgumentError");
+const createUser = require("../../services/user.service").createUser;
+const findUserById = require("../../services/user.service").findUserById;
+const findUserByName = require("../../services/user.service").findUserByName;
+const User = require("../../models/user.model");
+const InvalidArgumentError = require("../../utils/errors/InvalidArgumentError");
 
-const dbUtils = require("../tests/dbUtils");
+const dbUtils = require("../../test-utils/dbUtils");
 
 beforeAll(dbUtils.setup);
 

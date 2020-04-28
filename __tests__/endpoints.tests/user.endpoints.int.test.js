@@ -1,20 +1,18 @@
+/**
+ * @jest-environment mongodb
+ */
+
 require("dotenv").config();
 const supertest = require("supertest");
-const app = require("../app");
+const app = require("../../app");
 const request = supertest(app);
-const setupMongoose = require("../utils/setupMongoose");
-const dbUtils = require("../tests/dbUtils");
-const User = require("../models/user.model");
+const dbUtils = require("../../test-utils/dbUtils");
+const User = require("../../models/user.model");
 const cookieParser = require("set-cookie-parser");
 const jwt = require("jsonwebtoken");
 
-beforeAll(async () => {
-  await setupMongoose("user-test-1");
-});
-
-afterAll(async () => {
-  await dbUtils.jestTeardown();
-});
+beforeAll(dbUtils.setup);
+afterAll(dbUtils.teardown);
 
 describe("POST /users endpoint", () => {
   afterAll(async () => {
