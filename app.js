@@ -5,6 +5,7 @@ const errorHandlers = require("./errorHandlers");
 const userRouter = require("./routers/user.router");
 const passport = require("passport");
 const localStrategy = require("./utils/passport-strategies/local.strategy");
+const jwtStrategy = require("./utils/passport-strategies/jwt.strategy");
 const cookies = require("cookies");
 const sanitize = require("express-mongo-sanitize");
 
@@ -23,6 +24,7 @@ app.use(sanitize());
 
 app.use(passport.initialize());
 passport.use(localStrategy);
+passport.use(jwtStrategy);
 
 app.use("/users", userRouter);
 
