@@ -6,18 +6,12 @@ const roles = {
 };
 
 function roleToString(roleSymbol) {
-  switch (roleSymbol) {
-    case roles.ADMIN:
-      return "ADMIN";
-    case roles.AUTHOR:
-      return "AUTHOR";
-    case roles.USER:
-      return "USER";
-    case roles.ANON:
-      return "ANON";
-    default:
-      throw new Error(`Cannot convert ${roleSymbol} to a role string`);
+  for (let roleName in roles) {
+    if (roles[roleName] === roleSymbol) {
+      return roleName;
+    }
   }
+  throw new Error(`Cannot convert ${roleSymbol} to a role string`);
 }
 
 function roleFromString(roleString) {
