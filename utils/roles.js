@@ -21,18 +21,10 @@ function roleToString(roleSymbol) {
 }
 
 function roleFromString(roleString) {
-  switch (roleString) {
-    case "ADMIN":
-      return roles.ADMIN;
-    case "AUTHOR":
-      return roles.AUTHOR;
-    case "USER":
-      return roles.USER;
-    case "ANON":
-      return roles.ANON;
-    default:
-      throw new Error(`Cannot convert ${roleString} to a role symbol`);
+  if (!roles[roleString]) {
+    throw new Error(`Cannot convert ${roleString} to a role symbol`);
   }
+  return roles[roleString];
 }
 
 module.exports = {
