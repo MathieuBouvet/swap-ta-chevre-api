@@ -15,3 +15,16 @@ it.each([
     expect(roleOnRessource(user)(ressourceName)(ressource)).toBe(expectedRole);
   }
 );
+
+it.each([
+  [{ id: 0, role: ADMIN }, "unknown"],
+  [{ id: 1, role: USER }, "unknown"],
+  [{ id: 2, role: USER }, "unknown"],
+  [null, "unknown"],
+  [{ role: null }, "unknown"],
+])(
+  "should throw an error when a ressource is not configured",
+  (user, ressourceName) => {
+    expect(() => roleOnRessource(user)(ressourceName)).toThrow();
+  }
+);
