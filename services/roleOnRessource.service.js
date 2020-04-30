@@ -9,13 +9,18 @@ const roleOnressourceConfig = {
 };
 
 module.exports = function roleOnRessource(user) {
-  return (ressourceName) => (ressource) => {
-    if (!user || !user.role) {
-      return ANON;
+  return (ressourceName) => {
+    if (!roleOnressourceConfig[ressourceName]) {
+      throw new Error(`Ressource ${ressourceName} is not configured`);
     }
-    if (user.role === ADMIN) {
-      return ADMIN;
-    }
-    return roleOnressourceConfig[ressourceName](user, ressource);
+    return (ressource) => {
+      if (!user || !user.role) {
+        return ANON;
+      }
+      if (user.role === ADMIN) {
+        return ADMIN;
+      }
+      return roleOnressourceConfig[ressourceName](user, ressource);
+    };
   };
 };
