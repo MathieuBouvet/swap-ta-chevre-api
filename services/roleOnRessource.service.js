@@ -1,8 +1,11 @@
 const {
-  roles: { ADMIN, ANON },
+  roles: { ADMIN, ANON, AUTHOR, USER },
 } = require("../utils/roles");
 
 const roleOnressourceConfig = {
+  user: (user, ressource) => {
+    return user.id === ressource._id ? AUTHOR : USER;
+  },
 };
 
 module.exports = function roleOnRessource(user) {
