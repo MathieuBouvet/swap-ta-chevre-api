@@ -8,7 +8,11 @@ module.exports = function fieldsAutorization(config) {
     return (role) => (mode) => (ressource) => {
       const filteredData = {};
       for (let field in ressource) {
-        if (config[ressourceName][field][mode].includes(role)) {
+        const authorized = config[ressourceName][field][mode];
+        if (authorized == null) {
+          throw new Error(`No configuration found for mode '${mode}'`);
+        }
+        if (authorized.includes(role)) {
           filteredData[field] = ressource[field];
         }
       }
