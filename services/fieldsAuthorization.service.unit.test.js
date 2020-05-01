@@ -51,3 +51,11 @@ it("should throw an error when a ressource lacks configuration", () => {
     "No configuration found for ressource 'ressource-name-not-configured'"
   );
 });
+
+it("should throw an error when a mode lacks configuration", () => {
+  expect(() =>
+    fieldsAuthorization(testConfig)("testRessource")(ANON)("unconfigured-mode")(
+      input
+    )
+  ).toThrow("No configuration found for mode 'unconfigured-mode'");
+});
