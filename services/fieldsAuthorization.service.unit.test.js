@@ -59,3 +59,12 @@ it("should throw an error when a mode lacks configuration", () => {
     )
   ).toThrow("No configuration found for mode 'unconfigured-mode'");
 });
+
+it("should throw an error when a field lacks configuration", () => {
+  expect(() =>
+    fieldsAuthorization(testConfig)("testRessource")(ANON)("read")({
+      ...input,
+      unconfiguredField: true,
+    })
+  ).toThrow("No configuration found for field 'unconfiguredField'");
+});
