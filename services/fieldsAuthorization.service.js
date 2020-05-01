@@ -1,4 +1,6 @@
-module.exports = function fieldsAutorization(config) {
+const configuration = {};
+
+module.exports = function fieldsAutorization(config = configuration) {
   return (ressourceName) => {
     if (config[ressourceName] == null) {
       throw new Error(
