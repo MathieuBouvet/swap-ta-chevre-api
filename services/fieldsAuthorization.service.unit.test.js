@@ -43,3 +43,11 @@ it.each([
     ).toEqual(expected);
   }
 );
+
+it("should throw an error when a ressource lacks configuration", () => {
+  expect(() =>
+    fieldsAuthorization(testConfig)("ressource-name-not-configured")
+  ).toThrow(
+    "No configuration found for ressource 'ressource-name-not-configured'"
+  );
+});
