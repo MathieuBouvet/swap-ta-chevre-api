@@ -158,7 +158,7 @@ describe("POST /login endpoint", () => {
   });
 });
 
-describe("GET /users/:id endpoint", () => {
+describe.only("GET /users/:id endpoint", () => {
   let seededUser = null;
   beforeAll(async () => {
     const mongooseUser = await new User({
@@ -174,5 +174,15 @@ describe("GET /users/:id endpoint", () => {
   it("should return the user", async () => {
     const user = await request.get("/users/" + seededUser._id);
     expect(user.body).toEqual(seededUser);
+  });
+
+  it("should return 404 when no user found", async () => {
+    const notFound = await request.get("/users/42");
+    expect(notFound.statusCode).toBe(404);
+    expect(notFound.body).toEqual({
+      httpStatus: 404,
+      httpMessage: "Not Found",
+      errorDetails: "User 42 not found",
+    });
   });
 });
