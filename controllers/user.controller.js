@@ -14,3 +14,8 @@ exports.login = (req, res) => {
   });
   res.status(201).send();
 };
+
+exports.getUser = errorDispatcher(async (req, res) => {
+  const user = await userService.findUserById(req.params.id, "-__v -password");
+  res.status(200).json(user);
+});
