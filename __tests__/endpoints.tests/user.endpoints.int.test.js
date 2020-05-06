@@ -157,3 +157,32 @@ describe("POST /login endpoint", () => {
     expect(invalidPasswordCookie).toEqual({});
   });
 });
+
+describe("GET /users/:id endpoint", () => {
+  let seededUser = null;
+  beforeAll(async () => {
+    const mongooseUser = await new User({
+      username: "test-user",
+      mail: "test-user@mail.com",
+      password: "test-user-password",
+      phoneNumber: "0401254578",
+    }).save();
+    const { _id, username, mail, phoneNumber } = mongooseUser;
+    seededUser = { _id: _id.toString(), username, mail, phoneNumber };
+  });
+
+  it("should return the user", async () => {
+    const user = await request.get("/users/" + seededUser._id);
+    expect(user.body).toEqual(seededUser);
+  });
+
+  it("should return 404 when no user found", async () => {
+    const notFound = await request.get("/users/42");
+    expect(notFound.statusCode).toBe(404);
+    expect(notFound.body).toEqual({
+      httpStatus: 404,
+      httpMessage: "Not Found",
+      errorDetails: "User 42 not found",
+    });
+  });
+});

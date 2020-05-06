@@ -4,4 +4,5 @@ const localAuthentication = require("../middelwares/localAuthentication");
 
 router.post("/", controller.addUser);
 router.post("/login", localAuthentication, controller.login);
+router.get("/:id", controller.getUser);
 module.exports = router;
