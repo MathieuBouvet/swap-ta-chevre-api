@@ -158,7 +158,7 @@ describe("POST /login endpoint", () => {
   });
 });
 
-describe.only("GET /users/:id endpoint", () => {
+describe("GET /users/:id endpoint", () => {
   let seededUser = null;
   beforeAll(async () => {
     const mongooseUser = await new User({
