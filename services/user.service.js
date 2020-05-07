@@ -34,5 +34,12 @@ exports.findUserByName = async function (username, projection, options) {
 };
 
 exports.deleteUser = async function (userId) {
-  return null;
+  try {
+    return await User.deleteOne({ _id: userId });
+  } catch (err) {
+    if (isNotCastableIdError(err)) {
+      return { n: 0, ok: 1, deletedCount: 0 };
+    }
+    throw err;
+  }
 };
