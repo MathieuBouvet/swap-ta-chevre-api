@@ -177,3 +177,20 @@ describe("GET /users/:id endpoint", () => {
     });
   });
 });
+
+describe.only("DELETE /users/:id endpoint", () => {
+  it.todo("should allow deletion by admin");
+  it.todo("should allow deletion by author");
+  it.todo("should not allow deletion by simple user");
+  it("should not allow deletion by anonymous user", async () => {
+    const user = await new User({
+      username: "delete-by-anonymous",
+      mail: "anon-delete@test.com",
+      password: "user-password",
+    }).save();
+    const deleteAnon = await request.delete("/users/" + user._id);
+    const findUser = await User.findById(user._id);
+    expect(deleteAnon.statusCode).toBe(401);
+    expect(findUser).not.toBeNull();
+  });
+});
