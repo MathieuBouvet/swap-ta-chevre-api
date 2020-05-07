@@ -32,3 +32,7 @@ exports.findUserById = async function (userId, projection, options) {
 exports.findUserByName = async function (username, projection, options) {
   return await User.findOne({ username }, projection, options);
 };
+
+exports.deleteUser = async function (userId) {
+  return null;
+};
