@@ -28,7 +28,9 @@ const mockRequest = (data, tokenGenMode = "VALID") => {
   }
   return {
     cookies: {
-      accessToken,
+      get() {
+        return accessToken;
+      },
     },
   };
 };
