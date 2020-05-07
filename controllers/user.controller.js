@@ -23,3 +23,9 @@ exports.getUser = errorDispatcher(async (req, res) => {
   }
   res.status(200).json(user);
 });
+
+exports.deleteUser = errorDispatcher(async (req, res) => {
+  const user = await userService.findUserById(req.params.id);
+  await userService.deleteUser(user._id);
+  res.status(204).send();
+});
