@@ -104,6 +104,9 @@ describe("User finder by name service", () => {
   beforeAll(async () => {
     seededUser = await new User(userSeedWithPassword).save();
   });
+  afterAll(async () => {
+    await User.deleteMany({});
+  });
   it("Should return user with given name", async () => {
     const searchedUser = await findUserByName(seededUser.username);
     expect(searchedUser.toObject()).toEqual(seededUser.toObject());
