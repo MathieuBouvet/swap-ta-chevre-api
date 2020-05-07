@@ -142,4 +142,8 @@ describe("delete user", () => {
     const deletedUser = await User.findById(seededUser._id);
     expect(deletedUser).toBeNull();
   });
+  it("should not throw error on uncastable id", async () => {
+    const uncastableIdDeletion = await deleteUser(42);
+    expect(uncastableIdDeletion).toEqual({ n: 0, ok: 1, deletedCount: 0 });
+  });
 });
