@@ -3,8 +3,8 @@ const JwtStrategy = require("passport-jwt").Strategy;
 const options = {
   secretOrKey: process.env.JWT_SECRET_KEY,
   jwtFromRequest: (req) => {
-    if (req && req.cookies && req.cookies.accessToken) {
-      return req.cookies.accessToken;
+    if (req && req.cookies) {
+      return req.cookies.get("accessToken");
     }
     return null;
   },
