@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const createUser = require("../../services/user.service").createUser;
 const findUserById = require("../../services/user.service").findUserById;
 const findUserByName = require("../../services/user.service").findUserByName;
+const deleteUser = require("../../services/user.service").deleteUser;
 const User = require("../../models/user.model");
 const InvalidArgumentError = require("../../utils/errors/InvalidArgumentError");
 
@@ -121,5 +122,24 @@ describe("User finder by name service", () => {
   it("should return null when username does not exist", async () => {
     const notFound = await findUserByName("username-does-not-exist");
     expect(notFound).toBeNull();
+  });
+});
+
+describe("delete user", () => {
+  let seededUser = null;
+  beforeAll(async () => {
+    seededUser = await new User({
+      username: "test-user",
+      mail: "test-user-mail@test.com",
+      password: "the-test-password",
+    }).save();
+  });
+  afterAll(async () => {
+    await User.deleteMany({});
+  });
+  it("should delete the user with the given id", async () => {
+    await deleteUser(seededUser._id);
+    const deletedUser = await User.findById(seededUser._id);
+    expect(deletedUser).toBeNull();
   });
 });
