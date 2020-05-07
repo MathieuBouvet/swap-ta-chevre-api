@@ -97,6 +97,9 @@ describe("POST /login endpoint", () => {
   afterAll(async () => {
     await User.deleteMany({});
   });
+  afterAll(async () => {
+    await User.deleteMany({});
+  });
   it("should respond with a jwt auth token in a http only cookie", async () => {
     const res = await request.post("/users/login").send({
       username: "test-user",
@@ -156,7 +159,9 @@ describe("GET /users/:id endpoint", () => {
   afterAll(async () => {
     await User.deleteMany({});
   });
-
+  afterAll(async () => {
+    await User.deleteMany({});
+  });
   it("should return the user", async () => {
     const user = await request.get("/users/" + seededUser._id);
     expect(user.body).toEqual(seededUser);
