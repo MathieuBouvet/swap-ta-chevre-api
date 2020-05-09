@@ -7,8 +7,14 @@ exports.getFreshToken = function (user, expiresIn = "1h") {
       "user field must be an object with an _id property"
     );
   }
-  return jwt.sign({}, process.env.JWT_SECRET_KEY, {
-    expiresIn,
-    subject: user._id.toString(),
-  });
+  return jwt.sign(
+    {
+      role: user.role,
+    },
+    process.env.JWT_SECRET_KEY,
+    {
+      expiresIn,
+      subject: user._id.toString(),
+    }
+  );
 };

@@ -14,12 +14,14 @@ function differenceBetween(timer1, timer2) {
 describe("AccessToken getter service", () => {
   const user = {
     _id: 42,
+    role: "user",
   };
   it("should return a valid jwt token", () => {
     const token = accessToken.getFreshToken(user);
     expect(token);
     const decodedToken = jwt.decode(token);
     expect(decodedToken.sub).toBe("42");
+    expect(decodedToken.role).toBe("user");
     expect(jwt.verify(token, process.env.JWT_SECRET_KEY));
   });
   it("should set the validity of the token correctly", () => {
