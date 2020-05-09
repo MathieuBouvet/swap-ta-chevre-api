@@ -38,25 +38,49 @@ const mockNext = () => jest.fn();
 
 passport.use(jwtStrategy);
 
+const payload = {
+  sub: "me",
+  role: "my-role",
+};
+
 describe("Jwt autentication middleware", () => {
   it("should attach a valid access token to the req object", () => {
-    const req = mockRequest({ sub: "me" });
+    const req = mockRequest(payload);
     const next = mockNext();
     jwtAuth(req, null, next);
     expect(next.mock.calls[0].length).toBe(0);
     expect(req).toHaveProperty("userToken");
     expect(req.userToken).toHaveProperty("sub");
+    expect(req.userToken).toHaveProperty("role");
   });
 
   it.each([
-    ["has expired", mockRequest({ sub: "me" }, "EXPIRED")],
-    ["is invalid", mockRequest({ sub: "me" }, "INVALID_KEY")],
-    ["was tempered with", mockRequest({ sub: "me" }, "TEMPERED_WITH")],
-    ["is empty", mockRequest({ sub: "me" }, "EMPTY")],
-  ])("should not authenticate user when token %s", (testName, req) => {
-    const next = mockNext();
-    jwtAuth(req, null, next);
-    expect(next).toHaveBeenCalledWith(expect.any(Http401));
-    expect(req).not.toHaveProperty("userToken");
-  });
+    ["has expired", mockRequest(payload, "EXPIRED"), "jwt expired"],
+    ["is invalid", mockRequest(payload, "INVALID_KEY"), "invalid signature"],
+    [
+      "was tempered with",
+      mockRequest(payload, "TEMPERED_WITH"),
+      "invalid signature",
+    ],
+    ["is empty", mockRequest(payload, "EMPTY"), "No auth token"],
+    [
+      "has no subject claim",
+      mockRequest({ role: "my-role" }),
+      "An access token must have a 'subject' and a 'role' claim",
+    ],
+    [
+      "has no role claim",
+      mockRequest({ sub: "me" }),
+      "An access token must have a 'subject' and a 'role' claim",
+    ],
+  ])(
+    "should not authenticate user when token %s",
+    (testName, req, errorMessage) => {
+      const next = mockNext();
+      jwtAuth(req, null, next);
+      expect(next).toHaveBeenCalledWith(expect.any(Http401));
+      expect(next.mock.calls[0][0].message).toBe(errorMessage);
+      expect(req).not.toHaveProperty("userToken");
+    }
+  );
 });
