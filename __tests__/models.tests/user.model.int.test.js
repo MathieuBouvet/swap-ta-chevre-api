@@ -4,21 +4,17 @@
 
 const User = require("../../models/user.model");
 const dbUtils = require("../../test-utils/dbUtils");
+const { userSeedWithPassword } = require("../../test-utils/userSeedData");
 
 describe("password comparison", () => {
   beforeAll(dbUtils.setup);
   afterAll(dbUtils.teardown);
 
   it("should check given password", async () => {
-    const userData = {
-      username: "thetestuser",
-      password: "theuserpassword",
-      mail: "theusermail@test-mail.com",
-    };
-    const user = new User(userData);
+    const user = new User(userSeedWithPassword);
     await user.save();
 
-    const checkPassword = await user.isMyPassword("theuserpassword");
+    const checkPassword = await user.isMyPassword("test-user-password");
     const checkPassword2 = await user.isMyPassword("notmypassword");
     expect(checkPassword).toBe(true);
     expect(checkPassword2).toBe(false);
