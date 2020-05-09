@@ -37,4 +37,9 @@ app.use("/api/hello", (req, res) => {
 if (errorHandlers.length > 0) {
   app.use(errorHandlers);
 }
+
+app.use((err, req, res, next) => {
+  console.log(err);
+  next(err);
+});
 module.exports = app;
