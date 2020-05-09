@@ -9,7 +9,7 @@ module.exports = (req, res, next) => {
     if (!user) {
       return next(new Http401(info.message));
     }
-    req.userToken = user;
+    req.user = user;
     return next();
   })(req, res, next);
 };

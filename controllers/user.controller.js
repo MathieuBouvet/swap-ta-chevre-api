@@ -28,7 +28,7 @@ exports.getUser = withErrorDispatcher(async (req, res) => {
 
 exports.deleteUser = withErrorDispatcher(async (req, res) => {
   const user = await userService.findUserById(req.params.id);
-  if ([ADMIN, USER].includes(roleOnRessource(req.userToken)("user")(user))) {
+  if ([ADMIN, USER].includes(roleOnRessource(req.user)("user")(user))) {
     return res.status(403).send();
   }
   await userService.deleteUser(user._id);

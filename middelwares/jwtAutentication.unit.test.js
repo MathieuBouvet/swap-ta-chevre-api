@@ -49,9 +49,9 @@ describe("Jwt autentication middleware", () => {
     const next = mockNext();
     jwtAuth(req, null, next);
     expect(next.mock.calls[0].length).toBe(0);
-    expect(req).toHaveProperty("userToken");
-    expect(req.userToken).toHaveProperty("sub");
-    expect(req.userToken).toHaveProperty("role");
+    expect(req).toHaveProperty("user");
+    expect(req.user).toHaveProperty("sub");
+    expect(req.user).toHaveProperty("role");
   });
 
   it.each([
