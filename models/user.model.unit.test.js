@@ -82,3 +82,24 @@ describe("phone number validation", () => {
     );
   });
 });
+describe("role validation", () => {
+  it.each([
+    ["default role", getDefaultUser({ role: undefined })],
+    ["user", getDefaultUser({ role: "user" })],
+    ["admin", getDefaultUser({ role: "admin" })],
+  ])("should allow %s", (roleName, user) => {
+    expect(user.validateSync("role")).not.toBeInstanceOf(
+      mongoose.Error.ValidationError
+    );
+  });
+
+  it.each([
+    [getDefaultUser({ role: null })],
+    [getDefaultUser({ role: "other" })],
+    [getDefaultUser({ role: "ADMIN" })],
+  ])("should not allow invalid role", (user) => {
+    expect(user.validateSync("role")).toBeInstanceOf(
+      mongoose.Error.ValidationError
+    );
+  });
+});
