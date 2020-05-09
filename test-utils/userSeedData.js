@@ -2,6 +2,7 @@ const userSeed = {
   username: "test-user",
   mail: "test-user@testmail.com",
   phoneNumber: "0945124578",
+  role: "user",
 };
 
 const userSeedWithPassword = {
@@ -14,6 +15,7 @@ const badUserSeed = {
   password: "bad",
   mail: "bad",
   phoneNumber: "bad",
+  role: "bad",
 };
 
 const getRelevantUserFields = (
