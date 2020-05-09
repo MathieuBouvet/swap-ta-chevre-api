@@ -10,6 +10,11 @@ const dbUtils = require("../../test-utils/dbUtils");
 const User = require("../../models/user.model");
 const cookieParser = require("set-cookie-parser");
 const jwt = require("jsonwebtoken");
+const {
+  userSeed,
+  badUserSeed,
+  userSeedWithPassword,
+} = require("../../test-utils/userSeedData");
 
 beforeAll(dbUtils.setup);
 afterAll(dbUtils.teardown);
@@ -19,32 +24,18 @@ describe("POST /users endpoint", () => {
     await User.deleteMany({});
   });
   it("should respond correctly when input is OK", async () => {
-    const userData = {
-      username: "test-posting-user",
-      mail: "test-posting-user@testmail.com",
-      phoneNumber: "0945124578",
-    };
-    const userDataWithPassword = {
-      ...userData,
-      password: "test-posting-user-password",
-    };
-    const res = await request.post("/users").send(userDataWithPassword);
+    const res = await request.post("/users").send(userSeedWithPassword);
     const createdUser = await User.findOne({
-      username: "test-posting-user",
+      username: "test-user",
     }).select("username mail phoneNumber -_id");
 
     expect(res.type).toBe("application/json");
     expect(res.statusCode).toBe(201);
-    expect(createdUser.toObject()).toEqual(userData);
+    expect(createdUser.toObject()).toEqual(userSeed);
   });
 
   it("should respond correctly to inputs failing validations", async () => {
-    const res = await request.post("/users").send({
-      username: "bad",
-      password: "bad",
-      mail: "bad",
-      phoneNumber: "bad",
-    });
+    const res = await request.post("/users").send(badUserSeed);
     expect(res.status).toBe(400);
     expect(res.body).toMatchObject({
       httpStatus: 400,
@@ -77,12 +68,7 @@ describe("POST /users endpoint", () => {
   });
 
   it("should respond correctly to a duplicate username", async () => {
-    const res = await request.post("/users").send({
-      username: "test-posting-user",
-      password: "thepassword",
-      mail: "test-posting-user@testmail.com",
-      phoneNumber: "0945124578",
-    });
+    const res = await request.post("/users").send(userSeedWithPassword);
     expect(res.status).toBe(400);
     expect(res.body).toMatchObject({
       httpStatus: 400,
@@ -92,7 +78,7 @@ describe("POST /users endpoint", () => {
           kind: "unique",
           name: "ValidatorError",
           message:
-            "Error, expected `username` to be unique. Value: `test-posting-user`",
+            "Error, expected `username` to be unique. Value: `test-user`",
         },
       },
     });
@@ -102,16 +88,15 @@ describe("POST /users endpoint", () => {
 describe("POST /login endpoint", () => {
   let seededUser = null;
   beforeAll(async () => {
-    seededUser = await new User({
-      username: "test-posting-user",
-      mail: "test-posting-user@testmail.com",
-      password: "test-password",
-    }).save();
+    seededUser = await new User(userSeedWithPassword).save();
+  });
+  afterAll(async () => {
+    await User.deleteMany({});
   });
   it("should respond with a jwt auth token in a http only cookie", async () => {
     const res = await request.post("/users/login").send({
-      username: "test-posting-user",
-      password: "test-password",
+      username: "test-user",
+      password: "test-user-password",
     });
     const cookies = cookieParser(res, { map: true });
     const decoded = jwt.decode(cookies.accessToken.value);
@@ -129,8 +114,8 @@ describe("POST /login endpoint", () => {
       password: "test-password",
     });
     const invalidPasswordRequest = request.post("/users/login").send({
-      username: "test-posting-user",
-      password: "password-don't-match",
+      username: "test-user",
+      password: "password-doesn't-match",
     });
     const [invalidUsernameRes, invalidPasswordRes] = await Promise.all([
       invalidUsernameRequest,
@@ -161,14 +146,12 @@ describe("POST /login endpoint", () => {
 describe("GET /users/:id endpoint", () => {
   let seededUser = null;
   beforeAll(async () => {
-    const mongooseUser = await new User({
-      username: "test-user",
-      mail: "test-user@mail.com",
-      password: "test-user-password",
-      phoneNumber: "0401254578",
-    }).save();
+    const mongooseUser = await new User(userSeedWithPassword).save();
     const { _id, username, mail, phoneNumber } = mongooseUser;
     seededUser = { _id: _id.toString(), username, mail, phoneNumber };
+  });
+  afterAll(async () => {
+    await User.deleteMany({});
   });
 
   it("should return the user", async () => {
