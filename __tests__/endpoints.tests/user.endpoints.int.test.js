@@ -117,6 +117,7 @@ describe("POST /login endpoint", () => {
       process.env.NODE_ENV === "production"
     );
     expect(decoded.sub).toBe(seededUser._id.toString());
+    expect(decoded.role).toBe(USER);
     expect(jwt.verify(cookies.accessToken.value, process.env.JWT_SECRET_KEY));
   });
   it("should not log in unknown user", async () => {
