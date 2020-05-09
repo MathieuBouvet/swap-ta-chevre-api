@@ -42,7 +42,7 @@ describe("POST /users endpoint", () => {
   it("should respond correctly to inputs failing validations", async () => {
     const res = await request.post("/users").send(badUserSeed);
     expect(res.status).toBe(400);
-    expect(res.body).toMatchObject({
+    expect(res.body).toEqual({
       httpStatus: 400,
       httpMessage: "Bad Request",
       errorDetails: {
