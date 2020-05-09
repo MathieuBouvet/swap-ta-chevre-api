@@ -1,5 +1,5 @@
 const User = require("../models/user.model");
-const InvalidArgumentError = require("../utils/errors/InvalidArgumentError");
+const { InvalidArgumentError } = require("../utils/errors");
 const MongooseCastError = require("mongoose").Error.CastError;
 
 const isNotCastableIdError = (error) =>

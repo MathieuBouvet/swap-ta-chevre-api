@@ -1,5 +1,5 @@
 const passport = require("passport");
-const Http401 = require("../utils/errors/Http401");
+const { Http401 } = require("../utils/errors");
 
 module.exports = (req, res, next) => {
   passport.authenticate("local", { session: false }, (err, user, info) => {

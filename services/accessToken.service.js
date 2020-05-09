@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const InvalidArgumentError = require("../utils/errors/InvalidArgumentError");
+const { InvalidArgumentError } = require("../utils/errors");
 
 exports.getFreshToken = function (user, expiresIn = "1h") {
   if (!user || !user._id) {

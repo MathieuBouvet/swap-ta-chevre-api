@@ -9,7 +9,7 @@ const findUserById = require("../../services/user.service").findUserById;
 const findUserByName = require("../../services/user.service").findUserByName;
 const deleteUser = require("../../services/user.service").deleteUser;
 const User = require("../../models/user.model");
-const InvalidArgumentError = require("../../utils/errors/InvalidArgumentError");
+const { InvalidArgumentError } = require("../../utils/errors");
 
 const dbUtils = require("../../test-utils/dbUtils");
 const { userSeedWithPassword } = require("../../test-utils/userSeedData");

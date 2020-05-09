@@ -1,5 +1,5 @@
 const withErrorDispatcherToExpress = require("./withErrorDispatcherToExpress");
-const InvalidArgumentError = require("./errors/InvalidArgumentError");
+const { InvalidArgumentError } = require("./errors");
 
 describe("withErrorDispatcherToExpress wrapper", () => {
   it("should return a function", () => {

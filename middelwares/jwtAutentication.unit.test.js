@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const jwtAuth = require("./jwtAutentication");
 const passport = require("passport");
 const jwtStrategy = require("../utils/passport-strategies/jwt.strategy");
-const Http401 = require("../utils/errors/Http401");
+const { Http401 } = require("../utils/errors");
 
 const mockRequest = (data, tokenGenMode = "VALID") => {
   const expiration =

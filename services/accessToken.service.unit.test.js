@@ -1,7 +1,7 @@
 require("dotenv").config();
 const accessToken = require("./accessToken.service");
 const jwt = require("jsonwebtoken");
-const InvalidArgumentError = require("../utils/errors/InvalidArgumentError");
+const { InvalidArgumentError } = require("../utils/errors");
 
 function inNbHours(nbHours) {
   return Math.floor(Date.now() / 1000) + nbHours * 3600;

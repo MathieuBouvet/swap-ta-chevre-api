@@ -1,7 +1,7 @@
 const errorDispatcher = require("../utils/withErrorDispatcherToExpress");
 const userService = require("../services/user.service");
 const getAccessToken = require("../services/accessToken.service").getFreshToken;
-const Http404 = require("../utils/errors/Http404");
+const { Http404 } = require("../utils/errors");
 const roleOnRessource = require("../services/roleOnRessource.service");
 const { ADMIN, USER } = require("../utils/roles");
 
