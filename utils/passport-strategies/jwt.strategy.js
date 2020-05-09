@@ -11,8 +11,10 @@ const options = {
 };
 
 module.exports = new JwtStrategy(options, (jwtPayload, done) => {
-  if (jwtPayload.sub != null) {
-    return done(null, jwtPayload);
+  if (jwtPayload.sub == null || jwtPayload.role == null) {
+    return done(null, false, {
+      message: "An access token must have a 'subject' and a 'role' claim",
+    });
   }
-  done(null, false, { message: "An access token must have a 'subject' claim" });
+  return done(null, jwtPayload);
 });
