@@ -180,7 +180,7 @@ describe("GET /users/:id endpoint", () => {
 
 describe.only("DELETE /users/:id endpoint", () => {
   afterEach(async () => {
-    User.deleteMany({});
+    await User.deleteMany({});
   });
   it.todo("should allow deletion by admin");
   it.todo("should allow deletion by author");
