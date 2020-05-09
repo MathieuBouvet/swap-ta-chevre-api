@@ -1,7 +1,5 @@
 const fieldsAuthorization = require("./fieldsAuthorization.service");
-const {
-  roles: { ADMIN, AUTHOR, USER, ANON },
-} = require("../utils/roles");
+const { ADMIN, AUTHOR, USER, ANON } = require("../utils/roles");
 
 const testConfig = {
   testRessource: {

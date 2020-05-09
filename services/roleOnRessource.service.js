@@ -1,6 +1,4 @@
-const {
-  roles: { ADMIN, ANON, AUTHOR, USER },
-} = require("../utils/roles");
+const { ADMIN, ANON, AUTHOR, USER } = require("../utils/roles");
 
 const roleOnressourceConfig = {
   user: (user, ressource) => {

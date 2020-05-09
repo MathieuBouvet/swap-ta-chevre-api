@@ -1,7 +1,5 @@
 const roleOnRessource = require("./roleOnRessource.service");
-const {
-  roles: { ADMIN, AUTHOR, USER, ANON },
-} = require("../utils/roles");
+const { ADMIN, AUTHOR, USER, ANON } = require("../utils/roles");
 
 it.each([
   [{ id: 0, role: ADMIN }, "user", { _id: 42 }, ADMIN],
