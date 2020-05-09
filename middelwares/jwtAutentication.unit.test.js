@@ -73,6 +73,7 @@ describe("Jwt autentication middleware", () => {
       mockRequest({ sub: "me" }),
       "An access token must have a 'subject' and a 'role' claim",
     ],
+    ["is not set", {}, "No auth token"],
   ])(
     "should not authenticate user when token %s",
     (testName, req, errorMessage) => {
