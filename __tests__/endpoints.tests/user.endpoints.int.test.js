@@ -17,6 +17,7 @@ const {
   getRelevantUserFields,
 } = require("../../test-utils/userSeedData");
 const { getFreshToken } = require("../../services/accessToken.service");
+const { USER } = require("../../utils/roles");
 
 beforeAll(dbUtils.setup);
 afterAll(dbUtils.teardown);
@@ -188,6 +189,7 @@ describe.only("DELETE /users/:id endpoint", () => {
     const user = await new User(userSeedWithPassword).save();
     const simpleUserToken = getFreshToken({
       _id: 42,
+      role: USER,
     });
     const deleteSimpleUser = await request
       .delete("/users/" + user._id)
