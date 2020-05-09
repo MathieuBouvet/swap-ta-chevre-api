@@ -2,6 +2,8 @@ const errorDispatcher = require("../utils/withErrorDispatcherToExpress");
 const userService = require("../services/user.service");
 const getAccessToken = require("../services/accessToken.service").getFreshToken;
 const Http404 = require("../utils/errors/Http404");
+const roleOnRessource = require("../services/roleOnRessource.service");
+const { ADMIN, USER } = require("../utils/roles");
 
 exports.addUser = errorDispatcher(async (req, res) => {
   await userService.createUser(req.body);
@@ -26,6 +28,9 @@ exports.getUser = errorDispatcher(async (req, res) => {
 
 exports.deleteUser = errorDispatcher(async (req, res) => {
   const user = await userService.findUserById(req.params.id);
+  if ([ADMIN, USER].includes(roleOnRessource(req.userToken)("user")(user))) {
+    return res.status(403).send();
+  }
   await userService.deleteUser(user._id);
   res.status(204).send();
 });
