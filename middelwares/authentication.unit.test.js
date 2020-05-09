@@ -1,6 +1,6 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
-const jwtAuth = require("./jwtAutentication");
+const jwtAuth = require("./authentication")();
 const passport = require("passport");
 const jwtStrategy = require("../utils/passport-strategies/jwt.strategy");
 const { Http401 } = require("../utils/errors");
