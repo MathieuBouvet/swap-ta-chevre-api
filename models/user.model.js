@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
 const bcrypt = require("bcrypt");
 const saltWorkFactor = Number.parseInt(process.env.SALT_ROUNDS);
+const { ADMIN, USER } = require("../utils/roles");
 
 const userSchema = mongoose.Schema({
   username: {
@@ -24,6 +25,11 @@ const userSchema = mongoose.Schema({
   phoneNumber: {
     type: String,
     match: /^((\+)33|0)[1-9](\d{2}){4}$/,
+  },
+  role: {
+    type: String,
+    enum: [ADMIN, USER],
+    default: USER,
   },
 });
 
