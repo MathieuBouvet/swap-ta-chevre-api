@@ -1,13 +1,9 @@
 const User = require("./user.model.js");
 const mongoose = require("mongoose");
+const { userSeedWithPassword } = require("../test-utils/userSeedData");
 
-const getDefaultUser = () =>
-  new User({
-    username: "longenough",
-    password: "longenoughpassword",
-    mail: "test.the.mail@shouldpass.com",
-  });
-
+const getDefaultUser = (data = {}) =>
+  new User({ ...userSeedWithPassword, ...data });
 describe("username validation", () => {
   const testUser = getDefaultUser();
   it("should allow a valid username", () => {
