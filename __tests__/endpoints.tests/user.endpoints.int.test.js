@@ -14,6 +14,7 @@ const {
   userSeed,
   badUserSeed,
   userSeedWithPassword,
+  getRelevantUserFields,
 } = require("../../test-utils/userSeedData");
 
 beforeAll(dbUtils.setup);
@@ -27,11 +28,14 @@ describe("POST /users endpoint", () => {
     const res = await request.post("/users").send(userSeedWithPassword);
     const createdUser = await User.findOne({
       username: "test-user",
-    }).select("username mail phoneNumber -_id");
+    });
+    const createdUserData = getRelevantUserFields(createdUser.toObject(), {
+      includeId: false,
+    });
 
     expect(res.type).toBe("application/json");
     expect(res.statusCode).toBe(201);
-    expect(createdUser.toObject()).toEqual(userSeed);
+    expect(createdUserData).toEqual(userSeed);
   });
 
   it("should respond correctly to inputs failing validations", async () => {
@@ -147,8 +151,7 @@ describe("GET /users/:id endpoint", () => {
   let seededUser = null;
   beforeAll(async () => {
     const mongooseUser = await new User(userSeedWithPassword).save();
-    const { _id, username, mail, phoneNumber } = mongooseUser;
-    seededUser = { _id: _id.toString(), username, mail, phoneNumber };
+    seededUser = getRelevantUserFields(mongooseUser);
   });
   afterAll(async () => {
     await User.deleteMany({});
