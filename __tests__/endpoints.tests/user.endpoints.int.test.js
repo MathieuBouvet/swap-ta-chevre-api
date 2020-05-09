@@ -68,6 +68,11 @@ describe("POST /users endpoint", () => {
           message:
             "Path `username` (`bad`) is shorter than the minimum allowed length (8).",
         },
+        role: {
+          kind: "enum",
+          message: "`bad` is not a valid enum value for path `role`.",
+          name: "ValidatorError",
+        },
       },
     });
   });
