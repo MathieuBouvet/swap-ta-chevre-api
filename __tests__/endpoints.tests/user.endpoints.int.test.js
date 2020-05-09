@@ -23,7 +23,7 @@ beforeAll(dbUtils.setup);
 afterAll(dbUtils.teardown);
 
 describe("POST /users endpoint", () => {
-  afterAll(async () => {
+  afterEach(async () => {
     await User.deleteMany({});
   });
   it("should respond correctly when input is OK", async () => {
@@ -79,6 +79,7 @@ describe("POST /users endpoint", () => {
   });
 
   it("should respond correctly to a duplicate username", async () => {
+    await request.post("/users").send(userSeedWithPassword);
     const res = await request.post("/users").send(userSeedWithPassword);
     expect(res.status).toBe(400);
     expect(res.body).toMatchObject({
