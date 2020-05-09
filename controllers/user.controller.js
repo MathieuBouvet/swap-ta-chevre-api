@@ -9,7 +9,7 @@ exports.addUser = errorDispatcher(async (req, res) => {
 });
 
 exports.login = (req, res) => {
-  const token = getAccessToken(req.user._id);
+  const token = getAccessToken(req.user);
   res.cookies.set("accessToken", token, {
     secure: process.env.NODE_ENV === "production",
   });
