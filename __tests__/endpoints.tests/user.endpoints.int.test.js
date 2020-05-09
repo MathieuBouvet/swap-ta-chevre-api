@@ -181,7 +181,7 @@ describe("GET /users/:id endpoint", () => {
   });
 });
 
-describe.only("DELETE /users/:id endpoint", () => {
+describe("DELETE /users/:id endpoint", () => {
   afterEach(async () => {
     await User.deleteMany({});
   });
