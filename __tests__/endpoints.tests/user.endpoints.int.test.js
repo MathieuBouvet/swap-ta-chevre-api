@@ -16,6 +16,7 @@ const {
   userSeedWithPassword,
   getRelevantUserFields,
 } = require("../../test-utils/userSeedData");
+const { getFreshToken } = require("../../services/accessToken.service");
 
 beforeAll(dbUtils.setup);
 afterAll(dbUtils.teardown);
@@ -97,9 +98,6 @@ describe("POST /login endpoint", () => {
   afterAll(async () => {
     await User.deleteMany({});
   });
-  afterAll(async () => {
-    await User.deleteMany({});
-  });
   it("should respond with a jwt auth token in a http only cookie", async () => {
     const res = await request.post("/users/login").send({
       username: "test-user",
@@ -159,9 +157,6 @@ describe("GET /users/:id endpoint", () => {
   afterAll(async () => {
     await User.deleteMany({});
   });
-  afterAll(async () => {
-    await User.deleteMany({});
-  });
   it("should return the user", async () => {
     const user = await request.get("/users/" + seededUser._id);
     expect(user.body).toEqual(seededUser);
@@ -184,13 +179,20 @@ describe.only("DELETE /users/:id endpoint", () => {
   });
   it.todo("should allow deletion by admin");
   it.todo("should allow deletion by author");
-  it.todo("should not allow deletion by simple user");
+  it("should not allow deletion by simple user", async () => {
+    const user = await new User(userSeedWithPassword).save();
+    const simpleUserToken = getFreshToken({
+      _id: 42,
+    });
+    const deleteSimpleUser = await request
+      .delete("/users/" + user._id)
+      .set("Cookie", ["accessToken=" + simpleUserToken]);
+    const findUser = await User.findById(user._id);
+    expect(deleteSimpleUser.statusCode).toBe(403);
+    expect(findUser).not.toBeNull();
+  });
   it("should not allow deletion by anonymous user", async () => {
-    const user = await new User({
-      username: "delete-by-anonymous",
-      mail: "anon-delete@test.com",
-      password: "user-password",
-    }).save();
+    const user = await new User(userSeedWithPassword).save();
     const deleteAnon = await request.delete("/users/" + user._id);
     const findUser = await User.findById(user._id);
     expect(deleteAnon.statusCode).toBe(401);
