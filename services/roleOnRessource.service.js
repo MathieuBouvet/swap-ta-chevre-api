@@ -1,4 +1,5 @@
 const { ADMIN, ANON, AUTHOR, USER } = require("../utils/roles");
+const withArgsFlexibility = require("../utils/withArgsFlexibility");
 
 const roleOnressourceConfig = {
   user: (user, ressource) => {
@@ -6,7 +7,7 @@ const roleOnressourceConfig = {
   },
 };
 
-module.exports = function roleOnRessource(user) {
+module.exports = withArgsFlexibility(function roleOnRessource(user) {
   return (ressourceName) => {
     if (!roleOnressourceConfig[ressourceName]) {
       throw new Error(`Ressource ${ressourceName} is not configured`);
@@ -21,4 +22,4 @@ module.exports = function roleOnRessource(user) {
       return roleOnressourceConfig[ressourceName](user, ressource);
     };
   };
-};
+});
