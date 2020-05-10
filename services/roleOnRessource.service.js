@@ -3,7 +3,7 @@ const withArgsFlexibility = require("../utils/withArgsFlexibility");
 
 const roleOnressourceConfig = {
   user: (user, ressource) => {
-    return user.id === ressource._id ? AUTHOR : USER;
+    return user.id.toString() === ressource._id.toString() ? AUTHOR : USER;
   },
 };
 
