@@ -180,7 +180,19 @@ describe("DELETE /users/:id endpoint", () => {
     await User.deleteMany({});
   });
   it.todo("should allow deletion by admin");
-  it.todo("should allow deletion by author");
+  it("should allow deletion by author", async () => {
+    const user = await new User(userSeedWithPassword).save();
+    const authorToken = getFreshToken({
+      _id: user._id,
+      role: USER,
+    });
+    const deleteAuthor = await request
+      .delete("/users/" + user._id)
+      .set("Cookie", ["accessToken=" + authorToken]);
+    const findUser = await User.findById(user._id);
+    expect(deleteAuthor.statusCode).toBe(204);
+    expect(findUser).toBeNull();
+  });
   it("should not allow deletion by simple user", async () => {
     const user = await new User(userSeedWithPassword).save();
     const simpleUserToken = getFreshToken({
