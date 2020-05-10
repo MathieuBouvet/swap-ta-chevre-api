@@ -17,7 +17,7 @@ const {
   getRelevantUserFields,
 } = require("../../test-utils/userSeedData");
 const { getFreshToken } = require("../../services/accessToken.service");
-const { USER } = require("../../utils/roles");
+const { USER, ADMIN } = require("../../utils/roles");
 
 beforeAll(dbUtils.setup);
 afterAll(dbUtils.teardown);
@@ -179,7 +179,19 @@ describe("DELETE /users/:id endpoint", () => {
   afterEach(async () => {
     await User.deleteMany({});
   });
-  it.todo("should allow deletion by admin");
+  it("should allow deletion by admin", async () => {
+    const user = await new User(userSeedWithPassword).save();
+    const adminToken = getFreshToken({
+      _id: 42,
+      role: ADMIN,
+    });
+    const deleteAdmin = await request
+      .delete("/users/" + user._id)
+      .set("Cookie", ["accessToken=" + adminToken]);
+    const findUser = await User.findById(user._id);
+    expect(deleteAdmin.statusCode).toBe(204);
+    expect(findUser).toBeNull();
+  });
   it("should allow deletion by author", async () => {
     const user = await new User(userSeedWithPassword).save();
     const authorToken = getFreshToken({
