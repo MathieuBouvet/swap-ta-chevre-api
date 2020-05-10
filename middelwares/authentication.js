@@ -12,7 +12,8 @@ module.exports = (options = { strategy: "jwt" }) => (req, res, next) =>
       if (!user) {
         return next(new Http401(info.message));
       }
-      req.user = user;
+      req.user =
+        options.strategy === "jwt" ? { id: user.sub, role: user.role } : user;
       return next();
     }
   )(req, res, next);
