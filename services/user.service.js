@@ -1,5 +1,5 @@
 const User = require("../models/user.model");
-const InvalidArgumentError = require("../utils/errors/InvalidArgumentError");
+const { InvalidArgumentError } = require("../utils/errors");
 const MongooseCastError = require("mongoose").Error.CastError;
 
 const isNotCastableIdError = (error) =>
@@ -31,4 +31,15 @@ exports.findUserById = async function (userId, projection, options) {
 
 exports.findUserByName = async function (username, projection, options) {
   return await User.findOne({ username }, projection, options);
+};
+
+exports.deleteUser = async function (userId) {
+  try {
+    return await User.deleteOne({ _id: userId });
+  } catch (err) {
+    if (isNotCastableIdError(err)) {
+      return { n: 0, ok: 1, deletedCount: 0 };
+    }
+    throw err;
+  }
 };

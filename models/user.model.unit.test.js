@@ -1,13 +1,9 @@
 const User = require("./user.model.js");
 const mongoose = require("mongoose");
+const { userSeedWithPassword } = require("../test-utils/userSeedData");
 
-const getDefaultUser = () =>
-  new User({
-    username: "longenough",
-    password: "longenoughpassword",
-    mail: "test.the.mail@shouldpass.com",
-  });
-
+const getDefaultUser = (data = {}) =>
+  new User({ ...userSeedWithPassword, ...data });
 describe("username validation", () => {
   const testUser = getDefaultUser();
   it("should allow a valid username", () => {
@@ -82,6 +78,27 @@ describe("phone number validation", () => {
   it("should not allow invalid phone numbers", () => {
     testUser.phoneNumber = "45rt5";
     expect(testUser.validateSync("phoneNumber")).toBeInstanceOf(
+      mongoose.Error.ValidationError
+    );
+  });
+});
+describe("role validation", () => {
+  it.each([
+    ["default role", getDefaultUser({ role: undefined })],
+    ["user", getDefaultUser({ role: "user" })],
+    ["admin", getDefaultUser({ role: "admin" })],
+  ])("should allow %s", (roleName, user) => {
+    expect(user.validateSync("role")).not.toBeInstanceOf(
+      mongoose.Error.ValidationError
+    );
+  });
+
+  it.each([
+    [getDefaultUser({ role: null })],
+    [getDefaultUser({ role: "other" })],
+    [getDefaultUser({ role: "ADMIN" })],
+  ])("should not allow invalid role", (user) => {
+    expect(user.validateSync("role")).toBeInstanceOf(
       mongoose.Error.ValidationError
     );
   });

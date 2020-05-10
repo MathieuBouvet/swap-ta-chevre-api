@@ -16,12 +16,14 @@ const {
   userSeedWithPassword,
   getRelevantUserFields,
 } = require("../../test-utils/userSeedData");
+const { getFreshToken } = require("../../services/accessToken.service");
+const { USER, ADMIN } = require("../../utils/roles");
 
 beforeAll(dbUtils.setup);
 afterAll(dbUtils.teardown);
 
 describe("POST /users endpoint", () => {
-  afterAll(async () => {
+  afterEach(async () => {
     await User.deleteMany({});
   });
   it("should respond correctly when input is OK", async () => {
@@ -41,7 +43,7 @@ describe("POST /users endpoint", () => {
   it("should respond correctly to inputs failing validations", async () => {
     const res = await request.post("/users").send(badUserSeed);
     expect(res.status).toBe(400);
-    expect(res.body).toMatchObject({
+    expect(res.body).toEqual({
       httpStatus: 400,
       httpMessage: "Bad Request",
       errorDetails: {
@@ -67,11 +69,17 @@ describe("POST /users endpoint", () => {
           message:
             "Path `username` (`bad`) is shorter than the minimum allowed length (8).",
         },
+        role: {
+          kind: "enum",
+          message: "`bad` is not a valid enum value for path `role`.",
+          name: "ValidatorError",
+        },
       },
     });
   });
 
   it("should respond correctly to a duplicate username", async () => {
+    await request.post("/users").send(userSeedWithPassword);
     const res = await request.post("/users").send(userSeedWithPassword);
     expect(res.status).toBe(400);
     expect(res.body).toMatchObject({
@@ -110,40 +118,35 @@ describe("POST /login endpoint", () => {
       process.env.NODE_ENV === "production"
     );
     expect(decoded.sub).toBe(seededUser._id.toString());
+    expect(decoded.role).toBe(USER);
     expect(jwt.verify(cookies.accessToken.value, process.env.JWT_SECRET_KEY));
   });
-  it("should not log in unknown user", async () => {
-    const invalidUsernameRequest = request.post("/users/login").send({
-      username: "unknown-username",
-      password: "test-password",
-    });
-    const invalidPasswordRequest = request.post("/users/login").send({
-      username: "test-user",
-      password: "password-doesn't-match",
-    });
-    const [invalidUsernameRes, invalidPasswordRes] = await Promise.all([
-      invalidUsernameRequest,
-      invalidPasswordRequest,
-    ]);
-    const invalidUsernameCookie = cookieParser(invalidUsernameRes, {
+  it.each([
+    [
+      "unknown user",
+      {
+        username: "unknown-username",
+        password: "test-password",
+      },
+    ],
+    [
+      "known user with bad password",
+      {
+        username: "test-user",
+        password: "password-doesn't-match",
+      },
+    ],
+  ])("should not login %s", async (badLoginData) => {
+    const invalidLogin = await request.post("/users/login").send(badLoginData);
+    const invalidRequestCookie = cookieParser(invalidLogin, {
       map: true,
     });
-    const invalidPasswordCookie = cookieParser(invalidPasswordRes, {
-      map: true,
-    });
-    expect(invalidUsernameRes.status).toBe(401);
-    expect(invalidUsernameRes.body).toMatchObject({
+    expect(invalidLogin.status).toBe(401);
+    expect(invalidLogin.body).toMatchObject({
       httpStatus: 401,
       httpMessage: "Unauthorized",
     });
-    expect(invalidUsernameCookie).toEqual({});
-
-    expect(invalidPasswordRes.status).toBe(401);
-    expect(invalidPasswordRes.body).toMatchObject({
-      httpStatus: 401,
-      httpMessage: "Unauthorized",
-    });
-    expect(invalidPasswordCookie).toEqual({});
+    expect(invalidRequestCookie).toEqual({});
   });
 });
 
@@ -156,7 +159,6 @@ describe("GET /users/:id endpoint", () => {
   afterAll(async () => {
     await User.deleteMany({});
   });
-
   it("should return the user", async () => {
     const user = await request.get("/users/" + seededUser._id);
     expect(user.body).toEqual(seededUser);
@@ -170,5 +172,57 @@ describe("GET /users/:id endpoint", () => {
       httpMessage: "Not Found",
       errorDetails: "User 42 not found",
     });
+  });
+});
+
+describe("DELETE /users/:id endpoint", () => {
+  afterEach(async () => {
+    await User.deleteMany({});
+  });
+  it("should allow deletion by admin", async () => {
+    const user = await new User(userSeedWithPassword).save();
+    const adminToken = getFreshToken({
+      _id: 42,
+      role: ADMIN,
+    });
+    const deleteAdmin = await request
+      .delete("/users/" + user._id)
+      .set("Cookie", ["accessToken=" + adminToken]);
+    const findUser = await User.findById(user._id);
+    expect(deleteAdmin.statusCode).toBe(204);
+    expect(findUser).toBeNull();
+  });
+  it("should allow deletion by author", async () => {
+    const user = await new User(userSeedWithPassword).save();
+    const authorToken = getFreshToken({
+      _id: user._id,
+      role: USER,
+    });
+    const deleteAuthor = await request
+      .delete("/users/" + user._id)
+      .set("Cookie", ["accessToken=" + authorToken]);
+    const findUser = await User.findById(user._id);
+    expect(deleteAuthor.statusCode).toBe(204);
+    expect(findUser).toBeNull();
+  });
+  it("should not allow deletion by simple user", async () => {
+    const user = await new User(userSeedWithPassword).save();
+    const simpleUserToken = getFreshToken({
+      _id: 42,
+      role: USER,
+    });
+    const deleteSimpleUser = await request
+      .delete("/users/" + user._id)
+      .set("Cookie", ["accessToken=" + simpleUserToken]);
+    const findUser = await User.findById(user._id);
+    expect(deleteSimpleUser.statusCode).toBe(403);
+    expect(findUser).not.toBeNull();
+  });
+  it("should not allow deletion by anonymous user", async () => {
+    const user = await new User(userSeedWithPassword).save();
+    const deleteAnon = await request.delete("/users/" + user._id);
+    const findUser = await User.findById(user._id);
+    expect(deleteAnon.statusCode).toBe(401);
+    expect(findUser).not.toBeNull();
   });
 });

@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const InvalidArgumentError = require("../utils/errors/InvalidArgumentError");
+const { InvalidArgumentError } = require("../utils/errors");
 
 exports.getFreshToken = function (user, expiresIn = "1h") {
   if (!user || !user._id) {
@@ -7,8 +7,14 @@ exports.getFreshToken = function (user, expiresIn = "1h") {
       "user field must be an object with an _id property"
     );
   }
-  return jwt.sign({}, process.env.JWT_SECRET_KEY, {
-    expiresIn,
-    subject: user._id.toString(),
-  });
+  return jwt.sign(
+    {
+      role: user.role,
+    },
+    process.env.JWT_SECRET_KEY,
+    {
+      expiresIn,
+      subject: user._id.toString(),
+    }
+  );
 };

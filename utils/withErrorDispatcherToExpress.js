@@ -1,4 +1,4 @@
-const InvalidArgumentError = require("./errors/InvalidArgumentError");
+const { InvalidArgumentError } = require("./errors");
 
 module.exports = (controllerMethod) => {
   if (typeof controllerMethod !== "function") {

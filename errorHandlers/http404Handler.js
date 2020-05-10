@@ -1,4 +1,4 @@
-const Http404 = require("../utils/errors/Http404");
+const { Http404 } = require("../utils/errors");
 
 module.exports = {
   handledErrorType: Http404,

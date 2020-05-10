@@ -1,4 +1,4 @@
-const Http401 = require("../utils/errors/Http401");
+const { Http401 } = require("../utils/errors");
 
 module.exports = {
   handledErrorType: Http401,
@@ -6,7 +6,7 @@ module.exports = {
     res.status(401).json({
       httpStatus: 401,
       httpMessage: "Unauthorized",
-      errorDetails: err,
+      errorDetails: err.message,
     });
   },
 };

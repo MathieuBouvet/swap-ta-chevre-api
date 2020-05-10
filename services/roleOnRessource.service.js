@@ -1,14 +1,13 @@
-const {
-  roles: { ADMIN, ANON, AUTHOR, USER },
-} = require("../utils/roles");
+const { ADMIN, ANON, AUTHOR, USER } = require("../utils/roles");
+const withArgsFlexibility = require("../utils/withArgsFlexibility");
 
 const roleOnressourceConfig = {
   user: (user, ressource) => {
-    return user.id === ressource._id ? AUTHOR : USER;
+    return user.id.toString() === ressource._id.toString() ? AUTHOR : USER;
   },
 };
 
-module.exports = function roleOnRessource(user) {
+module.exports = withArgsFlexibility(function roleOnRessource(user) {
   return (ressourceName) => {
     if (!roleOnressourceConfig[ressourceName]) {
       throw new Error(`Ressource ${ressourceName} is not configured`);
@@ -23,4 +22,4 @@ module.exports = function roleOnRessource(user) {
       return roleOnressourceConfig[ressourceName](user, ressource);
     };
   };
-};
+});
