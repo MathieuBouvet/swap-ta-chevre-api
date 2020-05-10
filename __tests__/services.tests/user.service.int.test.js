@@ -180,4 +180,15 @@ describe("update user", () => {
     expect(getRelevantUserFields(updated)).toEqual(expectedUserData);
     expect(getRelevantUserFields(userInDb)).toEqual(expectedUserData);
   });
+
+  it("should not update invalid data", async () => {
+    const beforeUpdate = getRelevantUserFields(seededUser);
+    const updateBad = updateUser(seededUser, {
+      mail: "bad-mail",
+      role: "unkown-role",
+    });
+    expect(updateBad).rejects.toThrow(mongoose.Error.ValidationError);
+    const userInDb = await User.findById(seededUser._id);
+    expect(getRelevantUserFields(userInDb)).toEqual(beforeUpdate);
+  });
 });
