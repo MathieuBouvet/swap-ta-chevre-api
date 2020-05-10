@@ -43,3 +43,7 @@ exports.deleteUser = async function (userId) {
     throw err;
   }
 };
+
+exports.updateUser = async function (userDocument, data) {
+  return null;
+};
