@@ -3,6 +3,7 @@ const userService = require("../services/user.service");
 const getAccessToken = require("../services/accessToken.service").getFreshToken;
 const { Http404 } = require("../utils/errors");
 const roleOnRessource = require("../services/roleOnRessource.service");
+const fieldsAuthorization = require("../services/fieldsAuthorization.service");
 const { ADMIN, AUTHOR, USER } = require("../utils/roles");
 
 exports.addUser = withErrorDispatcher(async (req, res) => {
@@ -36,9 +37,22 @@ exports.deleteUser = withErrorDispatcher(async (req, res) => {
 });
 
 exports.updateUser = withErrorDispatcher(async (req, res) => {
-  const userRessource = await userService.findUserById(req.params.id);
-  if (roleOnRessource(req.user, "user", userRessource) === USER) {
+  const userRessource = await userService.findUserById(req.params.id, "-__v");
+  const role = roleOnRessource(req.user, "user", userRessource);
+  if (role === USER) {
     return res.status(403).send();
   }
-  res.status(200).send();
+  const writeAuthorization = fieldsAuthorization("user", role, "write");
+  const readAuthorization = fieldsAuthorization("user", role, "read");
+  const authorizedFields = writeAuthorization(req.body);
+  const updated = await userService.updateUser(userRessource, authorizedFields);
+  const preparedForSending = readAuthorization(
+    updated.toObject({
+      transform: (doc, ret) => {
+        delete ret.password;
+        return ret;
+      },
+    })
+  );
+  res.status(200).json(preparedForSending);
 });
