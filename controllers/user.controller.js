@@ -1,7 +1,7 @@
 const withErrorDispatcher = require("../utils/withErrorDispatcherToExpress");
 const userService = require("../services/user.service");
 const getAccessToken = require("../services/accessToken.service").getFreshToken;
-const { Http404 } = require("../utils/errors");
+const { Http403, Http404 } = require("../utils/errors");
 const roleOnRessource = require("../services/roleOnRessource.service");
 const fieldsAuthorization = require("../services/fieldsAuthorization.service");
 const { ADMIN, AUTHOR, USER } = require("../utils/roles");
@@ -40,7 +40,7 @@ exports.updateUser = withErrorDispatcher(async (req, res) => {
   const userRessource = await userService.findUserById(req.params.id, "-__v");
   const role = roleOnRessource(req.user, "user", userRessource);
   if (role === USER) {
-    return res.status(403).send();
+    throw new Http403("Insufficient rights to update this user");
   }
   const writeAuthorization = fieldsAuthorization("user", role, "write");
   const readAuthorization = fieldsAuthorization("user", role, "read");
