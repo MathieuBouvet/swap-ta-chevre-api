@@ -136,15 +136,16 @@ describe("POST /login endpoint", () => {
         password: "password-doesn't-match",
       },
     ],
-  ])("should not login %s", async (badLoginData) => {
+  ])("should not login %s", async (text, badLoginData) => {
     const invalidLogin = await request.post("/users/login").send(badLoginData);
     const invalidRequestCookie = cookieParser(invalidLogin, {
       map: true,
     });
     expect(invalidLogin.status).toBe(401);
-    expect(invalidLogin.body).toMatchObject({
+    expect(invalidLogin.body).toEqual({
       httpStatus: 401,
       httpMessage: "Unauthorized",
+      errorDetails: "Invalid username or password",
     });
     expect(invalidRequestCookie).toEqual({});
   });
