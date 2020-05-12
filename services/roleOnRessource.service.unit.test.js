@@ -7,6 +7,7 @@ it.each([
   [{ id: 2, role: USER }, "user", { _id: 42 }, USER],
   [null, "user", { _id: 42 }, ANON],
   [{ role: null }, "user", { _id: 42 }, ANON],
+  [{ role: ANON }, "user", { _id: 42 }, ANON],
 ])(
   "should return the user role on a specific ressource",
   (user, ressourceName, ressource, expectedRole) => {
