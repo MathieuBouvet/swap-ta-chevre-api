@@ -34,3 +34,7 @@ exports.deleteUser = withErrorDispatcher(async (req, res) => {
   await userService.deleteUser(user._id);
   res.status(204).send();
 });
+
+exports.updateUser = withErrorDispatcher(async (req, res) => {
+  res.status(200).send();
+});
