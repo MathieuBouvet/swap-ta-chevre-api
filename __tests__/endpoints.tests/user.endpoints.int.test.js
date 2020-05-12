@@ -318,4 +318,23 @@ describe("user update", () => {
       expect(updateRequest.body).toEqual(expectedBody);
     }
   );
+
+  it("should respond correctly when updating non existing user", async () => {
+    const token = getFreshToken({
+      _id: 42,
+      role: ADMIN,
+    });
+    const update = await request
+      .patch("/users/42")
+      .set("Cookie", ["accessToken=" + token])
+      .send({
+        username: "updated-username",
+      });
+    expect(update.statusCode).toBe(404);
+    expect(update.body).toEqual({
+      httpStatus: 404,
+      httpMessage: "Not Found",
+      errorDetails: "Trying to update non existing user",
+    });
+  });
 });
