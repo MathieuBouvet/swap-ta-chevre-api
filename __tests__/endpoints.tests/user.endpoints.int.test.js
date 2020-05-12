@@ -244,8 +244,8 @@ describe("user update", () => {
 
   it.each([
     [
-      "denied",
-      "not logged in",
+      "denied for a not logged in user",
+      "",
       42,
       false,
       401,
@@ -256,9 +256,9 @@ describe("user update", () => {
         httpStatus: 401,
       },
     ],
-    ["denied", USER, 42, true, 403, {}, {}],
+    ["denied for a simple user", USER, 42, true, 403, {}, {}],
     [
-      "allowed",
+      "allowed for the author",
       USER,
       null,
       true,
@@ -267,8 +267,8 @@ describe("user update", () => {
       null,
     ],
   ])(
-    "should be %s for %s user",
-    async (access, role, id, includeToken, expectedStatus, updates, body) => {
+    "should be %s",
+    async (text, role, id, includeToken, expectedStatus, updates, body) => {
       const accessToken = getFreshToken({
         _id: id || seededUser._id,
         role,
