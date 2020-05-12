@@ -1,10 +1,12 @@
 const mongooseValidationErrorHandler = require("./mongooseValidationErrorHandler");
 const http401Handler = require("./http401Handler");
+const http403Handler = require("./http403Handler");
 const http404Handler = require("./http404Handler");
 
 const registeredSpecificHandlers = [
   mongooseValidationErrorHandler,
   http401Handler,
+  http403Handler,
   http404Handler,
 ];
 
