@@ -1,9 +1,10 @@
 const withErrorDispatcher = require("../utils/withErrorDispatcherToExpress");
 const userService = require("../services/user.service");
 const getAccessToken = require("../services/accessToken.service").getFreshToken;
-const { Http404 } = require("../utils/errors");
+const { Http403, Http404 } = require("../utils/errors");
 const roleOnRessource = require("../services/roleOnRessource.service");
-const { ADMIN, AUTHOR } = require("../utils/roles");
+const fieldsAuthorization = require("../services/fieldsAuthorization.service");
+const { ADMIN, AUTHOR, USER } = require("../utils/roles");
 
 exports.addUser = withErrorDispatcher(async (req, res) => {
   await userService.createUser(req.body);
@@ -33,4 +34,28 @@ exports.deleteUser = withErrorDispatcher(async (req, res) => {
   }
   await userService.deleteUser(user._id);
   res.status(204).send();
+});
+
+exports.updateUser = withErrorDispatcher(async (req, res) => {
+  const userRessource = await userService.findUserById(req.params.id, "-__v");
+  if (userRessource == null) {
+    throw new Http404("Trying to update non existing user");
+  }
+  const role = roleOnRessource(req.user, "user", userRessource);
+  if (role === USER) {
+    throw new Http403("Insufficient rights to update this user");
+  }
+  const writeAuthorization = fieldsAuthorization("user", role, "write");
+  const readAuthorization = fieldsAuthorization("user", role, "read");
+  const authorizedFields = writeAuthorization(req.body);
+  const updated = await userService.updateUser(userRessource, authorizedFields);
+  const preparedForSending = readAuthorization(
+    updated.toObject({
+      transform: (doc, ret) => {
+        delete ret.password;
+        return ret;
+      },
+    })
+  );
+  res.status(200).json(preparedForSending);
 });

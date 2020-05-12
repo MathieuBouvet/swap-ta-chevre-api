@@ -227,3 +227,114 @@ describe("DELETE /users/:id endpoint", () => {
     expect(findUser).not.toBeNull();
   });
 });
+
+describe("user update", () => {
+  let seededUser = null;
+  const updateWith = {
+    username: "updated-user",
+    mail: "updated-mail@test.com",
+    role: "admin",
+  };
+  beforeEach(async () => {
+    seededUser = await new User(userSeedWithPassword).save();
+  });
+  afterEach(async () => {
+    await User.deleteMany({});
+  });
+
+  it.each([
+    [
+      "denied for a not logged in user",
+      "",
+      42,
+      false,
+      401,
+      {},
+      {
+        errorDetails: "No auth token",
+        httpMessage: "Unauthorized",
+        httpStatus: 401,
+      },
+    ],
+    [
+      "denied for a simple user",
+      USER,
+      42,
+      true,
+      403,
+      {},
+      {
+        httpStatus: 403,
+        httpMessage: "Forbidden",
+        errorDetails: "Insufficient rights to update this user",
+      },
+    ],
+    [
+      "allowed for the author",
+      USER,
+      null,
+      true,
+      200,
+      { username: "updated-user", mail: "updated-mail@test.com" },
+      null,
+    ],
+    [
+      "allowed for an admin",
+      ADMIN,
+      42,
+      true,
+      200,
+      {
+        username: "updated-user",
+        mail: "updated-mail@test.com",
+        role: "admin",
+      },
+      null,
+    ],
+  ])(
+    "should be %s",
+    async (text, role, id, includeToken, expectedStatus, updates, body) => {
+      const accessToken = getFreshToken({
+        _id: id || seededUser._id,
+        role,
+      });
+
+      const cookie = includeToken ? "accessToken=" + accessToken : "";
+      const updateRequest = await request
+        .patch("/users/" + seededUser._id)
+        .set("Cookie", [cookie])
+        .send(updateWith);
+
+      const expectedInDb = {
+        ...getRelevantUserFields(seededUser.toObject()),
+        ...updates,
+      };
+
+      const expectedBody = body ? body : expectedInDb;
+
+      const dataInDb = await User.findById(seededUser._id);
+      expect(updateRequest.statusCode).toBe(expectedStatus);
+      expect(getRelevantUserFields(dataInDb)).toEqual(expectedInDb);
+      expect(updateRequest.body).toEqual(expectedBody);
+    }
+  );
+
+  it("should respond correctly when updating non existing user", async () => {
+    const token = getFreshToken({
+      _id: 42,
+      role: ADMIN,
+    });
+    const update = await request
+      .patch("/users/42")
+      .set("Cookie", ["accessToken=" + token])
+      .send({
+        username: "updated-username",
+      });
+    expect(update.statusCode).toBe(404);
+    expect(update.body).toEqual({
+      httpStatus: 404,
+      httpMessage: "Not Found",
+      errorDetails: "Trying to update non existing user",
+    });
+  });
+});

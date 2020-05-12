@@ -1,6 +1,7 @@
 const User = require("../models/user.model");
 const { InvalidArgumentError } = require("../utils/errors");
 const MongooseCastError = require("mongoose").Error.CastError;
+const jsonMergePatch = require("json-merge-patch");
 
 const isNotCastableIdError = (error) =>
   error instanceof MongooseCastError && error.path === "_id";
@@ -42,4 +43,10 @@ exports.deleteUser = async function (userId) {
     }
     throw err;
   }
+};
+
+exports.updateUser = async function (userDocument, data) {
+  const merged = jsonMergePatch.apply(userDocument, data);
+  userDocument.overwrite(merged);
+  return userDocument.save();
 };

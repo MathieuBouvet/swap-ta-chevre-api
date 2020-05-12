@@ -5,6 +5,13 @@ class Http401 extends Error {
   }
 }
 
+class Http403 extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "Http403";
+  }
+}
+
 class Http404 extends Error {
   constructor(message) {
     super(message);
@@ -21,6 +28,7 @@ class InvalidArgumentError extends Error {
 
 module.exports = {
   Http401,
+  Http403,
   Http404,
   InvalidArgumentError,
 };

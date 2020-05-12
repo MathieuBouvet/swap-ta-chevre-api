@@ -1,66 +1,108 @@
 const fieldsAuthorization = require("./fieldsAuthorization.service");
 const { ADMIN, AUTHOR, USER, ANON } = require("../utils/roles");
 
-const testConfig = {
-  testRessource: {
-    id: {
-      read: [ADMIN, AUTHOR, USER, ANON],
-      write: [ADMIN],
-    },
-    username: {
-      read: [ADMIN, AUTHOR, USER, ANON],
-      write: [ADMIN, AUTHOR],
-    },
-    mail: {
-      read: [ADMIN, AUTHOR, USER],
-      write: [ADMIN, AUTHOR],
-    },
-  },
-};
-
 const input = {
-  id: 42,
+  _id: 42,
   username: "my-name",
   mail: "my-mail@test.com",
+  password: "my-password",
+  phoneNumber: "0102030405",
+  role: "my-role",
 };
 
 it.each([
-  [ADMIN, "read", { id: 42, username: "my-name", mail: "my-mail@test.com" }],
-  [AUTHOR, "read", { id: 42, username: "my-name", mail: "my-mail@test.com" }],
-  [USER, "read", { id: 42, username: "my-name", mail: "my-mail@test.com" }],
-  [ANON, "read", { id: 42, username: "my-name" }],
-  [ADMIN, "write", { id: 42, username: "my-name", mail: "my-mail@test.com" }],
-  [AUTHOR, "write", { username: "my-name", mail: "my-mail@test.com" }],
+  [
+    ADMIN,
+    "read",
+    {
+      _id: 42,
+      username: "my-name",
+      mail: "my-mail@test.com",
+      password: "my-password",
+      phoneNumber: "0102030405",
+      role: "my-role",
+    },
+  ],
+  [
+    AUTHOR,
+    "read",
+    {
+      _id: 42,
+      username: "my-name",
+      mail: "my-mail@test.com",
+      password: "my-password",
+      phoneNumber: "0102030405",
+      role: "my-role",
+    },
+  ],
+  [
+    USER,
+    "read",
+    {
+      _id: 42,
+      username: "my-name",
+      mail: "my-mail@test.com",
+      phoneNumber: "0102030405",
+      role: "my-role",
+    },
+  ],
+  [
+    ANON,
+    "read",
+    {
+      _id: 42,
+      username: "my-name",
+      mail: "my-mail@test.com",
+      phoneNumber: "0102030405",
+      role: "my-role",
+    },
+  ],
+  [
+    ADMIN,
+    "write",
+    {
+      _id: 42,
+      username: "my-name",
+      mail: "my-mail@test.com",
+      password: "my-password",
+      phoneNumber: "0102030405",
+      role: "my-role",
+    },
+  ],
+  [
+    AUTHOR,
+    "write",
+    {
+      username: "my-name",
+      mail: "my-mail@test.com",
+      password: "my-password",
+      phoneNumber: "0102030405",
+    },
+  ],
   [USER, "write", {}],
   [ANON, "write", {}],
 ])(
-  "should return the filtered ressource for the role and mode given",
+  "should return the filtered ressource for %s in %s mode",
   (role, mode, expected) => {
-    expect(
-      fieldsAuthorization(testConfig)("testRessource")(role)(mode)(input)
-    ).toEqual(expected);
+    expect(fieldsAuthorization("user")(role)(mode)(input)).toEqual(expected);
   }
 );
 
 it("should throw an error when a ressource lacks configuration", () => {
-  expect(() =>
-    fieldsAuthorization(testConfig)("ressource-name-not-configured")
-  ).toThrow(
+  expect(() => fieldsAuthorization("ressource-name-not-configured")).toThrow(
     "No configuration found for ressource 'ressource-name-not-configured'"
   );
 });
 
 it("should throw an error when a mode lacks configuration", () => {
   expect(() =>
-    fieldsAuthorization(testConfig)("testRessource")(ANON)("unconfigured-mode")(
-      input
-    )
+    fieldsAuthorization("user")(ANON)("unconfigured-mode")(input)
   ).toThrow("No configuration found for mode 'unconfigured-mode'");
 });
 
 it("should throw an error when a field lacks configuration", () => {
   expect(() =>
-    fieldsAuthorization(testConfig)("testRessource")(ANON)("read")({
+    fieldsAuthorization("user")(ANON)("read")({
       ...input,
       unconfiguredField: true,
     })

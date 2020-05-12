@@ -13,7 +13,7 @@ module.exports = withArgsFlexibility(function roleOnRessource(user) {
       throw new Error(`Ressource ${ressourceName} is not configured`);
     }
     return (ressource) => {
-      if (!user || !user.role) {
+      if (!user || !user.role || user.role === ANON) {
         return ANON;
       }
       if (user.role === ADMIN) {

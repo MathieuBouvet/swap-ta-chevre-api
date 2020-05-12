@@ -8,11 +8,15 @@ const createUser = require("../../services/user.service").createUser;
 const findUserById = require("../../services/user.service").findUserById;
 const findUserByName = require("../../services/user.service").findUserByName;
 const deleteUser = require("../../services/user.service").deleteUser;
+const updateUser = require("../../services/user.service").updateUser;
 const User = require("../../models/user.model");
 const { InvalidArgumentError } = require("../../utils/errors");
 
 const dbUtils = require("../../test-utils/dbUtils");
-const { userSeedWithPassword } = require("../../test-utils/userSeedData");
+const {
+  userSeedWithPassword,
+  getRelevantUserFields,
+} = require("../../test-utils/userSeedData");
 
 beforeAll(dbUtils.setup);
 
@@ -145,5 +149,46 @@ describe("delete user", () => {
   it("should not throw error on uncastable id", async () => {
     const uncastableIdDeletion = await deleteUser(42);
     expect(uncastableIdDeletion).toEqual({ n: 0, ok: 1, deletedCount: 0 });
+  });
+});
+
+describe("update user", () => {
+  let seededUser = null;
+  beforeAll(async () => {
+    seededUser = await new User({
+      username: "test-user",
+      mail: "test-user-mail@test.com",
+      password: "the-test-password",
+    }).save();
+  });
+  afterAll(async () => {
+    await User.deleteMany({});
+  });
+  it("should return the updated user", async () => {
+    const updated = await updateUser(seededUser, {
+      username: "updated-user",
+      mail: "updated-mail@test.com",
+    });
+    const expectedUserData = {
+      ...getRelevantUserFields(seededUser),
+      ...{
+        username: "updated-user",
+        mail: "updated-mail@test.com",
+      },
+    };
+    const userInDb = await User.findById(seededUser._id);
+    expect(getRelevantUserFields(updated)).toEqual(expectedUserData);
+    expect(getRelevantUserFields(userInDb)).toEqual(expectedUserData);
+  });
+
+  it("should not update invalid data", async () => {
+    const beforeUpdate = getRelevantUserFields(seededUser);
+    const updateBad = updateUser(seededUser, {
+      mail: "bad-mail",
+      role: "unkown-role",
+    });
+    expect(updateBad).rejects.toThrow(mongoose.Error.ValidationError);
+    const userInDb = await User.findById(seededUser._id);
+    expect(getRelevantUserFields(userInDb)).toEqual(beforeUpdate);
   });
 });
