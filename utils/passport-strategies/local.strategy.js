@@ -4,10 +4,7 @@ const findUser = require("../../services/user.service").findUserByName;
 module.exports = new LocalStrategy(async (username, password, done) => {
   try {
     const user = await findUser(username);
-    if (!user) {
-      return done(null, false, { message: "Invalid username or password" });
-    }
-    if (!(await user.isMyPassword(password))) {
+    if (!user || !(await user.isMyPassword(password))) {
       return done(null, false, { message: "Invalid username or password" });
     }
     return done(null, user);
