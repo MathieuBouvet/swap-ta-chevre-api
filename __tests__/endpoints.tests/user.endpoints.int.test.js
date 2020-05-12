@@ -256,6 +256,7 @@ describe("user update", () => {
         httpStatus: 401,
       },
     ],
+    ["denied", USER, 42, true, 403, {}, {}],
   ])(
     "should be %s for %s user",
     async (access, role, id, includeToken, expectedStatus, updates, body) => {
