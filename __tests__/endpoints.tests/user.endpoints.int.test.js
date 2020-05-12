@@ -257,6 +257,15 @@ describe("user update", () => {
       },
     ],
     ["denied", USER, 42, true, 403, {}, {}],
+    [
+      "allowed",
+      USER,
+      null,
+      true,
+      200,
+      { username: "updated-user", mail: "updated-mail@test.com" },
+      null,
+    ],
   ])(
     "should be %s for %s user",
     async (access, role, id, includeToken, expectedStatus, updates, body) => {
@@ -277,6 +286,8 @@ describe("user update", () => {
       };
 
       const expectedBody = body ? body : expectedInDb;
+
+      //console.log(updateRequest.body);
 
       const dataInDb = await User.findById(seededUser._id);
       expect(updateRequest.statusCode).toBe(expectedStatus);
