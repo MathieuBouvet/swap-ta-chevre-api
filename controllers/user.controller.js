@@ -38,6 +38,9 @@ exports.deleteUser = withErrorDispatcher(async (req, res) => {
 
 exports.updateUser = withErrorDispatcher(async (req, res) => {
   const userRessource = await userService.findUserById(req.params.id, "-__v");
+  if (userRessource == null) {
+    throw new Http404("Trying to update non existing user");
+  }
   const role = roleOnRessource(req.user, "user", userRessource);
   if (role === USER) {
     throw new Http403("Insufficient rights to update this user");
