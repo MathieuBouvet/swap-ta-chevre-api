@@ -227,3 +227,60 @@ describe("DELETE /users/:id endpoint", () => {
     expect(findUser).not.toBeNull();
   });
 });
+
+describe("user update", () => {
+  let seededUser = null;
+  const updateWith = {
+    username: "updated-user",
+    mail: "updated-mail@test.com",
+    role: "admin",
+  };
+  beforeEach(async () => {
+    seededUser = await new User(userSeedWithPassword).save();
+  });
+  afterEach(async () => {
+    await User.deleteMany({});
+  });
+
+  it.each([
+    [
+      "denied",
+      "not logged in",
+      42,
+      false,
+      401,
+      {},
+      {
+        errorDetails: "No auth token",
+        httpMessage: "Unauthorized",
+        httpStatus: 401,
+      },
+    ],
+  ])(
+    "should be %s for %s user",
+    async (access, role, id, includeToken, expectedStatus, updates, body) => {
+      const accessToken = getFreshToken({
+        _id: id || seededUser._id,
+        role,
+      });
+
+      const cookie = includeToken ? "accessToken=" + accessToken : "";
+      const updateRequest = await request
+        .patch("/users/" + seededUser._id)
+        .set("Cookie", [cookie])
+        .send(updateWith);
+
+      const expectedInDb = {
+        ...getRelevantUserFields(seededUser.toObject()),
+        ...updates,
+      };
+
+      const expectedBody = body ? body : expectedInDb;
+
+      const dataInDb = await User.findById(seededUser._id);
+      expect(updateRequest.statusCode).toBe(expectedStatus);
+      expect(getRelevantUserFields(dataInDb)).toEqual(expectedInDb);
+      expect(updateRequest.body).toEqual(expectedBody);
+    }
+  );
+});
