@@ -1,4 +1,35 @@
-const configuration = {};
+const roles = require("../utils/roles");
+const { ADMIN, AUTHOR } = roles;
+const ALL = Object.values(roles);
+
+const config = {
+  user: {
+    _id: {
+      read: ALL,
+      write: [ADMIN],
+    },
+    username: {
+      read: ALL,
+      write: [ADMIN, AUTHOR],
+    },
+    password: {
+      read: [ADMIN, AUTHOR],
+      write: [ADMIN, AUTHOR],
+    },
+    mail: {
+      read: ALL,
+      write: [ADMIN, AUTHOR],
+    },
+    phoneNumber: {
+      read: ALL,
+      write: [ADMIN, AUTHOR],
+    },
+    role: {
+      read: ALL,
+      write: [ADMIN],
+    },
+  },
+};
 
 module.exports = function fieldsAutorization(config = configuration) {
   return (ressourceName) => {
