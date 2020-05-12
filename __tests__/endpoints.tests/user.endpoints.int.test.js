@@ -256,7 +256,19 @@ describe("user update", () => {
         httpStatus: 401,
       },
     ],
-    ["denied for a simple user", USER, 42, true, 403, {}, {}],
+    [
+      "denied for a simple user",
+      USER,
+      42,
+      true,
+      403,
+      {},
+      {
+        httpStatus: 403,
+        httpMessage: "Forbidden",
+        errorDetails: "Insufficient rights to update this user",
+      },
+    ],
     [
       "allowed for the author",
       USER,
