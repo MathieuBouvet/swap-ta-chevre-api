@@ -1,4 +1,6 @@
 const roles = require("../utils/roles");
+const withArgsFlexibility = require("../utils/withArgsFlexibility");
+
 const { ADMIN, AUTHOR } = roles;
 const ALL = Object.values(roles);
 
@@ -31,7 +33,9 @@ const config = {
   },
 };
 
-module.exports = function fieldsAutorization(ressourceName) {
+module.exports = withArgsFlexibility(function fieldsAutorization(
+  ressourceName
+) {
   if (config[ressourceName] == null) {
     throw new Error(`No configuration found for ressource '${ressourceName}'`);
   }
@@ -52,4 +56,4 @@ module.exports = function fieldsAutorization(ressourceName) {
     }
     return filteredData;
   };
-};
+});
