@@ -3,7 +3,7 @@ const userService = require("../services/user.service");
 const getAccessToken = require("../services/accessToken.service").getFreshToken;
 const { Http404 } = require("../utils/errors");
 const roleOnRessource = require("../services/roleOnRessource.service");
-const { ADMIN, AUTHOR } = require("../utils/roles");
+const { ADMIN, AUTHOR, USER } = require("../utils/roles");
 
 exports.addUser = withErrorDispatcher(async (req, res) => {
   await userService.createUser(req.body);
@@ -36,5 +36,9 @@ exports.deleteUser = withErrorDispatcher(async (req, res) => {
 });
 
 exports.updateUser = withErrorDispatcher(async (req, res) => {
+  const userRessource = await userService.findUserById(req.params.id);
+  if (roleOnRessource(req.user, "user", userRessource) === USER) {
+    return res.status(403).send();
+  }
   res.status(200).send();
 });
